@@ -1,2 +1,54 @@
+# ENV files (very important)
 .env*
-.env.dev
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django static files and media
+/staticfiles/
+/media/
+
+# SQLite (remove if you're using PostgreSQL only)
+*.sqlite3
+
+# VSCode, IDEs and local config
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# Logs
+*.log
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+*.db-journal
+docker-compose.override.yml
+
+# Node.js / Frontend tools (if ever added)
+node_modules/
+dist/
+build/
+.cache/
+*.tsbuildinfo
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Git-related
+*.orig
+
+# Coverage/testing
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
