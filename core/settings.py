@@ -31,10 +31,10 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",  # add more if needed
+    "allauth.socialaccount.providers.google",
     "corsheaders",
 
-    # local
+    # local apps
     "backend.accounts",
     "backend.billing",
     "backend.generator",
@@ -73,13 +73,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 # Database
-
 DATABASES = {
     "default": dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
 # Password validation
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -88,7 +86,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-
 LANGUAGE_CODE = "en"
 
 LANGUAGES = [
@@ -103,30 +100,45 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files
-
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Default primary key field type
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Custom User Model (optional if you plan to extend)
+# Custom User Model
 AUTH_USER_MODEL = "accounts.User"
 
-# CORS (Allow everything during dev)
+# CORS
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Email (dummy config for now)
+# Email backend (console for now)
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# Allauth / dj-rest-auth
+# Allauth / dj-rest-auth settings
 SITE_ID = 1
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_VERIFICATION = "optional"
+
+# Oauth2
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    }
+}
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "backend.accounts.serializers.CustomRegisterSerializer"
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -137,3 +149,5 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
+
+
