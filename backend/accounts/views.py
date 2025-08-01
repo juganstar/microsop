@@ -3,7 +3,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from dj_rest_auth.registration.views import RegisterView
-from .serializers import CustomRegisterSerializer
+
+from accounts.serializers import CustomRegisterSerializer 
+
 
 def home(request):
     return render(request, "home.html")

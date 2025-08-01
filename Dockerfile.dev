@@ -5,7 +5,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt . 
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Não copiar tudo — o volume no compose vai montar por cima de /app
+# Copy .env.dev so OpenAI API key and others work in dev
+COPY .env.dev .env

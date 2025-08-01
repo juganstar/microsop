@@ -35,9 +35,9 @@ INSTALLED_APPS = [
     "corsheaders",
 
     # local apps
-    "backend.accounts",
-    "backend.billing",
-    "backend.generator",
+    "accounts",
+    "billing",
+    "generator",
 ]
 
 MIDDLEWARE = [
@@ -48,6 +48,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -117,10 +118,9 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # Allauth / dj-rest-auth settings
 SITE_ID = 1
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 
 # Oauth2
@@ -149,5 +149,8 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 
