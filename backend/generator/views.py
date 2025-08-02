@@ -10,10 +10,13 @@ from generator.serializers import GeneratedAssetSerializer
 from billing.utils import get_credits_used_this_month, get_monthly_limit_for_user
 from billing.models import UsageRecord
 
+from ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
+
 
 CREDITS_PER_SOP = 1
 
-
+@method_decorator(ratelimit(key='user', rate='5/m', method='POST', block=True), name='dispatch')
 class GenerateSOPView(APIView):
     permission_classes = [IsAuthenticated]
 

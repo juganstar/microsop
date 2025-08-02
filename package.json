@@ -1,0 +1,25 @@
+{
+  "name": "microsop",
+  "version": "1.0.0",
+  "description": "MicroSOP is a SaaS platform that helps solo service providers and small teams generate smart, AI-driven SOPs (Standard Operating Procedures), client checklists, and automated communications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juganstar/microsop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juganstar/microsop/issues"
+  },
+  "homepage": "https://github.com/juganstar/microsop#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.1"
+  }
+}

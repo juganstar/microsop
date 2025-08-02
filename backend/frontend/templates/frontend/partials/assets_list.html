@@ -1,0 +1,10 @@
+<h2 class="text-xl font-bold mb-4">Histórico de Gerações</h2>
+
+{% for asset in assets %}
+  <div class="mb-4 border-b pb-2">
+    <div class="text-sm text-gray-500">{{ asset.created_at|date:"d M Y H:i" }} — {{ asset.asset_type|capfirst }}</div>
+    <div class="whitespace-pre-wrap text-sm mt-1">{{ asset.content }}</div>
+  </div>
+{% empty %}
+  <p class="text-sm text-gray-500">Ainda não geraste nenhum conteúdo.</p>
+{% endfor %}

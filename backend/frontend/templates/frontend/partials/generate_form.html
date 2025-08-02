@@ -1,0 +1,28 @@
+<form 
+  hx-post="{% url 'generate-sop' %}" 
+  hx-target="#result-box" 
+  hx-swap="innerHTML"
+  class="bg-white p-6 rounded-xl shadow space-y-4"
+>
+  {% csrf_token %}
+
+  <label class="block text-sm font-medium">Tipo de conteúdo:</label>
+  <select name="asset_type" required class="w-full p-2 border rounded-md">
+    <option value="email">Email Profissional</option>
+    <option value="sms">SMS Curto</option>
+    <option value="checklist">Checklist</option>
+  </select>
+
+  <label class="block text-sm font-medium mt-4">Descrição do que precisa:</label>
+  <textarea 
+    name="prompt" 
+    rows="4" 
+    required 
+    class="w-full p-2 border rounded-md resize-none" 
+    placeholder="Ex: cliente atrasado no pagamento, lembrar de forma educada..."
+  ></textarea>
+
+  <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition">
+    Gerar SOP
+  </button>
+</form>

@@ -1,0 +1,143 @@
+{% extends "frontend/base.html" %}
+{% load static i18n %}
+
+{% block content %}
+<!-- 🚀 Trial Activation Modal (on first login) -->
+<div id="trial-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70">
+  <div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 animate-fade-in-up relative">
+    <h2 class="text-2xl font-bold mb-4 text-center">Bem-vindo(a) ao Micro-SOP!</h2>
+    <p class="text-gray-300 text-center mb-6">
+      Ativa já o teu período experimental gratuito. Recebe créditos para gerar SOPs automaticamente.
+    </p>
+    <div class="flex flex-col gap-4">
+      <button 
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
+        hx-get="{% url 'trial-config' %}"
+        hx-target="#modal-content"
+        _="on htmx:afterOnLoad wait 10ms then call showModal()">
+        Ativar Período Experimental
+      </button>
+    </div>
+    <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+  </div>
+</div>
+
+<!-- Hero Section -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-6 py-20 bg-gradient-to-br from-gray-900 to-black">
+  <h1 class="text-5xl font-extrabold mb-6 tracking-tight animate-fade-in-up">
+    {% trans "Gera SOPs Profissionais com IA" %}
+  </h1>
+  <p class="text-xl text-gray-300 max-w-2xl mb-10 animate-fade-in-up delay-100">
+    {% trans "Cria e envia procedimentos operacionais com um clique. Para freelancers e pequenas equipas." %}
+  </p>
+  <div class="flex gap-4">
+    <button class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl text-lg" 
+            hx-get="/login" 
+            hx-target="#modal-content" 
+            _="on htmx:afterOnLoad wait 10ms then call showModal()">
+      {% trans "Entrar" %}
+    </button>
+    <button class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl text-lg border border-gray-600"
+            hx-get="/register" 
+            hx-target="#modal-content" 
+            _="on htmx:afterOnLoad wait 10ms then call showModal()">
+      {% trans "Criar Conta" %}
+    </button>
+  </div>
+  <button 
+    class="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
+    hx-get="{% url 'trial-config' %}"
+    hx-target="#modal-content"
+    _="on htmx:afterOnLoad wait 10ms then call showModal()">
+    Ativar Período Experimental
+  </button>
+</section>
+
+<!-- Features Section -->
+<section class="bg-gray-950 text-white py-20 px-6 animate-fade-in">
+  <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-left">
+    <div>
+      <h2 class="text-xl font-semibold mb-2">1. {% trans "Descreve" %}</h2>
+      <p class="text-gray-400">{% trans "Preenche um pequeno formulário com o tipo de SOP que precisas." %}</p>
+    </div>
+    <div>
+      <h2 class="text-xl font-semibold mb-2">2. {% trans "Gera" %}</h2>
+      <p class="text-gray-400">{% trans "O nosso motor AI cria automaticamente o conteúdo por ti." %}</p>
+    </div>
+    <div>
+      <h2 class="text-xl font-semibold mb-2">3. {% trans "Usa" %}</h2>
+      <p class="text-gray-400">{% trans "Copia, edita ou envia diretamente para os teus clientes." %}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Preview -->
+<section class="bg-black text-white py-20 px-6 animate-fade-in">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl font-bold mb-6">{% trans "Preços Transparentes" %}</h2>
+    <p class="text-gray-400 mb-10">{% trans "Planos mensais para cada tipo de profissional." %}</p>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="border border-gray-700 p-6 rounded-xl">
+        <h3 class="text-xl font-semibold mb-2">Basic</h3>
+        <p class="text-2xl font-bold">3€ / mês</p>
+        <ul class="mt-4 text-gray-400 space-y-2">
+          <li>{% trans "10 gerações por mês" %}</li>
+          <li>{% trans "Acesso a emails e checklists" %}</li>
+        </ul>
+      </div>
+      <div class="border border-purple-600 p-6 rounded-xl bg-purple-900/10">
+        <h3 class="text-xl font-semibold mb-2">Premium</h3>
+        <p class="text-2xl font-bold">5€ / mês</p>
+        <ul class="mt-4 text-gray-300 space-y-2">
+          <li>{% trans "Gerações ilimitadas" %}</li>
+          <li>{% trans "Suporte prioritário" %}</li>
+          <li>{% trans "Envio SMS (via Twilio)" %}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="bg-gray-950 text-white py-20 px-6 animate-fade-in">
+  <div class="max-w-3xl mx-auto text-center">
+    <h2 class="text-3xl font-bold mb-10">{% trans "O que dizem os utilizadores" %}</h2>
+    <div class="space-y-10">
+      <blockquote class="border-l-4 border-purple-600 pl-4 text-left">
+        <p class="italic">{% trans "Finalmente consigo enviar emails profissionais em segundos. Poupa-me 2h por semana." %}</p>
+        <footer class="text-sm text-gray-400 mt-2">— João, Designer Freelancer</footer>
+      </blockquote>
+      <blockquote class="border-l-4 border-purple-600 pl-4 text-left">
+        <p class="italic">{% trans "Uso isto para cada novo cliente. Parece que tenho uma assistente pessoal." %}</p>
+        <footer class="text-sm text-gray-400 mt-2">— Ana, Consultora</footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="bg-black text-white text-center py-20 animate-fade-in">
+  <h2 class="text-3xl font-bold mb-6">{% trans "Pronto para automatizar o teu trabalho?" %}</h2>
+  <button class="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl text-lg"
+          hx-get="/register" 
+          hx-target="#modal-content" 
+          _="on htmx:afterOnLoad wait 10ms then call showModal()">
+    {% trans "Começar agora" %}
+  </button>
+</section>
+
+<!-- HTMX Modal -->
+<div id="modal" class="fixed inset-0 hidden bg-black/70 backdrop-blur-sm justify-center items-center z-50">
+  <div id="modal-content" class="bg-gray-900 text-white p-6 rounded-xl w-full max-w-xl shadow-xl">
+    <!-- HTMX loads content here -->
+  </div>
+</div>
+
+{% if show_trial_modal %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("trial-modal").style.display = "flex";
+  });
+</script>
+{% endif %}
+{% endblock %}
