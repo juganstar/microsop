@@ -1,0 +1,103 @@
+<!-- backend/frontend/modals/trial_config_modal.html -->
+<div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 animate-fade-in-up relative">
+  <h2 class="text-2xl font-bold mb-4 text-center">{% trans "Configure Your Trial Experience" %}</h2>
+  <p class="text-gray-300 text-center mb-6">
+    {% trans "Choose what you want to generate first. This helps us tailor your experience." %}
+  </p>
+
+  <form 
+    method="post"
+    action="/api/trial/activate/"
+    hx-post="/api/trial/activate/"
+    hx-target="#modal-content"
+    hx-swap="innerHTML"
+    class="space-y-5"
+  >
+    {% csrf_token %}
+
+    <div>
+      <label class="block text-sm mb-1 font-medium">{% trans "Content Type" %}</label>
+      <select name="asset_type" class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2">
+        <option value="email">{% trans "Email" %}</option>
+        <option value="checklist">{% trans "Checklist" %}</option>
+        <option value="sms">{% trans "SMS" %}</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 font-medium">{% trans "Primary Goal" %}</label>
+      <input type="text" name="goal" placeholder="{% trans 'e.g. Client onboarding' %}"
+             class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2" />
+    </div>
+
+    <button type="submit"
+            class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-xl font-medium text-lg transition">
+      {% trans "Activate and Continue" %}
+    </button>
+  </form>
+
+  <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
+    &times;
+  </button>
+</div>
+
+<script>
+  document.body.addEventListener('htmx:afterRequest', function (evt) {
+    if (evt.detail.xhr && evt.detail.xhr.response) {
+      try {
+        const res = JSON.parse(evt.detail.xhr.response);
+        if (res.success) {
+          // Close modal
+          const modal = document.getElementById('modal');
+          if (modal) modal.classList.add('hidden');
+
+          // Show toast
+          const toast = document.createElement('div');
+          toast.innerText = res.message || '✅ Trial ativado com sucesso!';
+          toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-xl animate-fade-in-out';
+          document.body.appendChild(toast);
+
+          setTimeout(() => {
+            toast.remove();
+            window.location.href = "/generate/";  // Optional redirect
+          }, 3000);
+        }
+      } catch (e) {
+        console.error('Erro ao processar resposta:', e);
+      }
+    }
+  });
+
+  function closeModal() {
+    const modal = document.getElementById('modal');
+    if (modal) modal.classList.add('hidden');
+  }
+</script>
+
+<style>
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(10px); }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.3s ease-out;
+  }
+
+  .animate-fade-in-out {
+    animation: fade-in-out 3s ease-in-out forwards;
+  }
+</style>

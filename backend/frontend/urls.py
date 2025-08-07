@@ -1,12 +1,16 @@
 from django.urls import path
-from .views import (
-    home,
-    views,
+from frontend.views.home import home
+from frontend.views.dashboard import (
     GenerateFormView,
     GenerateSOPView,
     UserAssetsView,
-    UsageTrackerView
+    UsageTrackerView,
 )
+
+from frontend.views.modals import trial_config_modal, login_modal, register_modal
+from frontend.views.trial import activate_trial
+from frontend.views.auth import register_submit
+
 
 urlpatterns = [
     path("", home, name="home"),
@@ -14,5 +18,11 @@ urlpatterns = [
     path("generate/", GenerateSOPView.as_view(), name="generate-sop"),
     path("my-assets/", UserAssetsView.as_view(), name="user-assets"),
     path("usage-tracker/", UsageTrackerView.as_view(), name="usage-tracker"),
-    path("trial/config/", views.trial_config_modal, name="trial-config"),
+    path("trial/config/", trial_config_modal, name="trial-config"),
+    path("api/trial/activate/", activate_trial, name="activate-trial"),
+
+    # MODALS
+    path("modal/login/", login_modal, name="login-modal"),
+    path("modal/register/", register_modal, name="register-modal"),  # GET
+    path("modal/register/submit/", register_submit, name="custom-register-htmx"),  # POST
 ]

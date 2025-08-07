@@ -1,0 +1,107 @@
+{% load i18n %}
+
+<div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative" id="modal-content">
+  <h2 class="text-2xl font-bold mb-4 text-center">{% trans "Create an account" %}</h2>
+
+  <form 
+    method="POST"
+    hx-post="{% url 'custom-register-htmx' %}"
+    hx-target="#modal-content"
+    hx-swap="outerHTML"
+    class="space-y-4"
+  >
+    {% csrf_token %}
+
+    <div>
+      <label class="block text-sm mb-1 font-medium">{% trans "Email" %}</label>
+      <input 
+        type="email" 
+        name="email" 
+        required
+        class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2" 
+        value="{{ form_data.email|default_if_none:'' }}"
+      />
+      {% if errors.email %}
+        <div class="text-red-500 text-sm">{{ errors.email|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 font-medium">{% trans "Password" %}</label>
+      <input 
+        type="password" 
+        name="password1" 
+        required
+        class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2" 
+        value="{{ form_data.password1|default_if_none:'' }}"
+      />
+      {% if errors.password1 %}
+        <div class="text-red-500 text-sm">{{ errors.password1|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 font-medium">{% trans "Confirm Password" %}</label>
+      <input 
+        type="password" 
+        name="password2" 
+        required
+        class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2" 
+        value="{{ form_data.password2|default_if_none:'' }}"
+      />
+      {% if errors.password2 %}
+        <div class="text-red-500 text-sm">{{ errors.password2|join:", " }}</div>
+      {% endif %}
+    </div>
+
+    <button type="submit"
+            class="w-full bg-purple-600 hover:bg-purple-700 py-2 rounded-xl font-medium text-lg transition">
+      {% trans "Register" %}
+    </button>
+  </form>
+
+  <div class="mt-4 text-center text-sm text-gray-400">
+    {% trans "Already have an account?" %}
+    <a 
+      class="text-purple-400 hover:underline"
+      hx-get="/modal/login/" 
+      hx-target="#modal-content"
+      hx-swap="outerHTML"
+      _="on htmx:afterOnLoad wait 10ms then call showModal()"
+    >
+      {% trans "Login here" %}
+    </a>
+  </div>
+
+  <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
+    &times;
+  </button>
+</div>
+
+<script>
+  function closeModal() {
+    const modal = document.getElementById('modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  document.body.addEventListener('htmx:afterRequest', function (evt) {
+    const xhr = evt.detail?.xhr;
+    if (xhr?.status === 201) {
+      try {
+        const res = JSON.parse(xhr.response);
+        if (res.key) {
+          window.location.reload();  // success
+        }
+      } catch (err) {
+        console.error("Error processing registration response:", err);
+      }
+    } else if (xhr?.status === 400) {
+      // Handle errors here
+      console.error("Error response received:", xhr.response);
+      const modalContent = document.getElementById('modal-content');
+      if (modalContent) {
+        modalContent.innerHTML = xhr.response; // Assuming the response is HTML
+      }
+    }
+  });
+</script>

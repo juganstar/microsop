@@ -48,6 +48,7 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -116,7 +117,7 @@ AUTH_USER_MODEL = "accounts.User"
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Email backend (console for now)
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 DEFAULT_FROM_EMAIL = "your_verified_sender@example.com"
 
@@ -168,6 +169,10 @@ REST_FRAMEWORK = {
 }
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+]
 
 
 

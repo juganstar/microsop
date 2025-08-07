@@ -18,6 +18,7 @@ class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
 
 
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_me(request):

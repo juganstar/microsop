@@ -8,23 +8,10 @@ from generator.models import GeneratedAsset
 from billing.utils import get_credits_used_this_month, get_monthly_limit_for_user
 from generator.openai_client import generate_micro_sop
 
-
-def home(request):
-    show_trial_modal = False
-    if request.user.is_authenticated and not request.user.profile.trial_shown:
-        show_trial_modal = True
-        request.user.profile.trial_shown = True
-        request.user.profile.save()
-    
-    return render(request, "frontend/home.html", {"show_trial_modal": show_trial_modal})
-
-
-
 @method_decorator(login_required, name='dispatch')
 class GenerateFormView(View):
     def get(self, request):
         return render(request, "frontend/partials/generate_form.html")
-
 
 @method_decorator(login_required, name='dispatch')
 class GenerateSOPView(View):
@@ -46,13 +33,11 @@ class GenerateSOPView(View):
 
         return render(request, "frontend/partials/generate_result.html", {"result": result})
 
-
 @method_decorator(login_required, name='dispatch')
 class UserAssetsView(View):
     def get(self, request):
         assets = GeneratedAsset.objects.filter(user=request.user).order_by("-created_at")[:20]
         return render(request, "frontend/partials/assets_list.html", {"assets": assets})
-
 
 @method_decorator(login_required, name='dispatch')
 class UsageTrackerView(View):
@@ -60,8 +45,3 @@ class UsageTrackerView(View):
         used = get_credits_used_this_month(request.user)
         limit = get_monthly_limit_for_user(request.user)
         return render(request, "frontend/partials/usage_stats.html", {"used": used, "limit": limit})
-
-
-@login_required
-def trial_config_modal(request):
-    return render(request, "frontend/modals/trial_config_modal.html")
