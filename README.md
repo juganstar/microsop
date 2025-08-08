@@ -1,31 +1,46 @@
-# microsop# MicroSOP – AI-Powered SOP Generator
+🚀 MicroSOP — AI-Powered SOP Generator
 
-MicroSOP is a SaaS platform that helps solo service providers and small teams generate smart, AI-driven SOPs (Standard Operating Procedures), client checklists, and automated communications.
+📌 Overview
 
-## 🚀 Features
+MicroSOP is a work-in-progress SaaS platform designed to help service providers and small teams generate professional SOPs (Standard Operating Procedures), checklists, and client communication assets in seconds.
+The mission is simple: reduce the time from idea to delivery by letting AI handle the formatting and structure, so you can focus on the actual work.
 
-- ✨ AI-generated SOPs, emails, and checklists
-- 🔐 OAuth2 secure authentication
-- 💬 Twilio integration for SMS alerts
-- 💳 Stripe billing for subscriptions (Basic & Premium)
-- 🌍 Multilingual support (PT / EN)
-- 🐳 Dockerized for easy deployment
-- 🧪 Free trial with verified payment method
+🛠 Tech Stack
+Backend: Django + Django REST Framework
 
-## 🛠️ Tech Stack
+Frontend: HTMX + TailwindCSS
 
-- **Backend:** Django · Django REST Framework · PostgreSQL
-- **Frontend:** React · TailwindCSS · Vite
-- **AI:** OpenAI GPT
-- **Payments:** Stripe API
-- **SMS:** Twilio API
-- **Deployment:** Railway (backend) · Netlify/Vercel (frontend)
-- **Auth:** OAuth2 with Django Allauth
+Database: PostgreSQL
 
-## 🐳 Local Setup (Docker)
+AI Integration: OpenAI API
 
-```bash
-git clone https://github.com/juganstar/microsop.git
+Payments: Stripe (subscriptions & usage-based)
+
+Messaging: Twilio (SMS notifications)
+
+Containerization: Docker & Docker Compose
+
+CI/CD: GitHub Actions (tests, linting, deployments)
+
+🚧 Project Status
+
+✅ Dockerized backend with development & production parity
+✅ Basic authentication flow (in progress)
+✅ CI/CD pipeline for linting & tests (in progress)
+🚀 AI content generation logic (coming soon)
+🚀 Stripe billing & usage tracking (coming soon)
+🚀 Polished UI with TailwindCSS (coming soon)
+
+📦 Local Development Setup
+
+bash
+
+# 1. Clone the repository
+git clone https://github.com/yourusername/microsop.git
 cd microsop
-cp .env.example .env
-docker compose up --build
+
+# 2. Copy example environment file
+cp .env.dev.example .env.dev
+
+# 3. Build & run with Docker
+docker compose -f docker-compose.dev.yml up --build
