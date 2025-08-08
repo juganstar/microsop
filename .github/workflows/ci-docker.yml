@@ -64,8 +64,17 @@ jobs:
         run: |
           docker compose -f docker-compose.dev.yml exec -T web ruff check . --fix
 
-      - name: Tests (pytest)
-        run: docker compose -f docker-compose.dev.yml exec -T web pytest -q
+      - name: Tests with coverage
+        run: |
+          docker compose -f docker-compose.dev.yml exec -T web coverage run -m pytest -q
+          docker compose -f docker-compose.dev.yml exec -T web coverage report -m
+          docker compose -f docker-compose.dev.yml exec -T web coverage html
+
+      - name: Upload coverage HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: htmlcov
 
       - name: Tear down
         if: always()
