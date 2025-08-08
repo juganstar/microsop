@@ -1,0 +1,57 @@
+name: CI (Docker Compose)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build images (uses Dockerfile.dev)
+        run: |
+          docker compose -f docker-compose.dev.yml build
+
+      - name: Start stack
+        run: |
+          docker compose -f docker-compose.dev.yml up -d
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            if docker compose -f docker-compose.dev.yml exec -T db pg_isready -U micro_admin -d micro_sop >/dev/null 2>&1; then
+              echo "DB ready"; break
+            fi
+            echo "Waiting for DB... ($i)"; sleep 2
+          done
+
+      - name: Install dev tools in web container
+        run: |
+          docker compose -f docker-compose.dev.yml exec -T web python -m pip install \
+            pytest pytest-django coverage ruff black isort mypy
+
+      - name: Django system checks & migrate
+        run: |
+          docker compose -f docker-compose.dev.yml exec -T web python manage.py check
+          docker compose -f docker-compose.dev.yml exec -T web python manage.py migrate --noinput
+
+      - name: Lint (ruff)
+        run: |
+          docker compose -f docker-compose.dev.yml exec -T web ruff check .
+
+      - name: Tests (pytest)
+        run: |
+          docker compose -f docker-compose.dev.yml exec -T web pytest -q
+
+      - name: Tear down
+        if: always()
+        run: |
+          docker compose -f docker-compose.dev.yml down -v
