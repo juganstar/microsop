@@ -13,6 +13,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Create a minimal .env.dev for CI
+      - name: Create .env.dev
+        run: |
+          cat > .env.dev << 'EOF'
+          SECRET_KEY=ci-secret
+          DEBUG=1
+          # Point Django to the compose Postgres service
+          DATABASE_URL=postgres://micro_admin:micro_pass@db:5432/micro_sop
+          PYTHONPATH=/app/backend
+          ALLOWED_HOSTS=*
+          EOF
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
