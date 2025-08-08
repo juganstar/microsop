@@ -11,7 +11,7 @@ def test_registration_creates_user(client):
         "password2": "StrongPass123!",
     }
     resp = client.post(url, data)
-    assert resp.status_code == 200
+    assert resp.status_code == 201
     assert get_user_model().objects.filter(email="test@example.com").exists()
 
 @pytest.mark.django_db
