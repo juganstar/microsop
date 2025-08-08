@@ -22,7 +22,7 @@ class CustomRegisterSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("The two password fields didn't match."))
         return attrs
 
-    def save(self):
+    def save(self, request=None):
         try:
             user = get_user_model().objects.create_user(
                 email=self.validated_data["email"],
@@ -34,6 +34,7 @@ class CustomRegisterSerializer(serializers.Serializer):
         except IntegrityError:
             raise serializers.ValidationError(_("This email is already in use."))
         return user
+
 
 
 class CustomLoginSerializer(LoginSerializer):
