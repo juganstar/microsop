@@ -1,9 +1,9 @@
-# backend/core/tests/test_migrations_clean.py
 import io
+import pytest
 from django.core.management import call_command
 
+@pytest.mark.django_db
 def test_no_missing_migrations():
-    # makemigrations --check exits non-zero when there are changes
     out = io.StringIO()
     try:
         call_command("makemigrations", "--check", "--dry-run", stdout=out, stderr=out)
