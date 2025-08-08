@@ -13,28 +13,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Create a minimal .env.dev for CI
+      # Create a minimal .env.dev from safe inline vars + GitHub Secrets
       - name: Create .env.dev
         run: |
           cat > .env.dev << 'EOF'
-          SECRET_KEY=ci-secret
           DEBUG=1
-          # Point Django to the compose Postgres service
+          SECRET_KEY=ci-secret
+          DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 0.0.0.0 [::1] web
           DATABASE_URL=postgres://micro_admin:micro_pass@db:5432/micro_sop
           PYTHONPATH=/app/backend
-          ALLOWED_HOSTS=*
           EOF
+          # Inject Secrets from GitHub
+          if [ -n "${OPENAI_API_KEY}" ]; then echo "OPENAI_API_KEY=${OPENAI_API_KEY}" >> .env.dev; fi
+          if [ -n "${GOOGLE_CLIENT_ID}" ]; then echo "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=${GOOGLE_CLIENT_ID}" >> .env.dev; fi
+          if [ -n "${GOOGLE_CLIENT_SECRET}" ]; then echo "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=${GOOGLE_CLIENT_SECRET}" >> .env.dev; fi
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build images (uses Dockerfile.dev)
-        run: |
-          docker compose -f docker-compose.dev.yml build
+        run: docker compose -f docker-compose.dev.yml build
 
       - name: Start stack
-        run: |
-          docker compose -f docker-compose.dev.yml up -d
+        run: docker compose -f docker-compose.dev.yml up -d
 
       - name: Wait for Postgres
         run: |
@@ -56,14 +61,11 @@ jobs:
           docker compose -f docker-compose.dev.yml exec -T web python manage.py migrate --noinput
 
       - name: Lint (ruff)
-        run: |
-          docker compose -f docker-compose.dev.yml exec -T web ruff check .
+        run: docker compose -f docker-compose.dev.yml exec -T web ruff check .
 
       - name: Tests (pytest)
-        run: |
-          docker compose -f docker-compose.dev.yml exec -T web pytest -q
+        run: docker compose -f docker-compose.dev.yml exec -T web pytest -q
 
       - name: Tear down
         if: always()
-        run: |
-          docker compose -f docker-compose.dev.yml down -v
+        run: docker compose -f docker-compose.dev.yml down -v
