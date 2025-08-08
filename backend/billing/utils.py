@@ -1,6 +1,5 @@
-from datetime import datetime
 from django.utils.timezone import now
-from django.db import models  # ✅ Needed for models.Sum
+from django.db import models  
 from .models import UsageRecord
 
 def get_credits_used_this_month(user):

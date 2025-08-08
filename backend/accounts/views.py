@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from dj_rest_auth.registration.views import RegisterView
 from allauth.account.utils import send_email_confirmation
 from rest_framework.views import APIView
-from rest_framework.response import Response
 
 from accounts.serializers import CustomRegisterSerializer 
 

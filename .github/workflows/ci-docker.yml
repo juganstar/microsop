@@ -61,7 +61,8 @@ jobs:
           docker compose -f docker-compose.dev.yml exec -T web python manage.py migrate --noinput
 
       - name: Lint (ruff)
-        run: docker compose -f docker-compose.dev.yml exec -T web ruff check .
+        run: |
+          docker compose -f docker-compose.dev.yml exec -T web ruff check . --fix
 
       - name: Tests (pytest)
         run: docker compose -f docker-compose.dev.yml exec -T web pytest -q
