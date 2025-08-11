@@ -23,7 +23,7 @@ urlpatterns += i18n_patterns(
     path("accounts/", include("allauth.socialaccount.urls")),
 
     # GENERATOR API
-    path("api/generator/", include("backend.generator.urls")),
+    path("api/generator/", include("generator.urls")),
 
     # ACCOUNTS
     path("", include("accounts.urls")),
