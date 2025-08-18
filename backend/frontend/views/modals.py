@@ -20,10 +20,13 @@ def trial_config_modal(request):
 
 
 def login_modal(request):
-    return render(request, "frontend/modals/login_modal.html")
+    return render(request, "frontend/modals/login_body.html", {
+        "form_data": request.POST or {},
+        "errors": {},
+    })
 
 def register_modal(request):
-    return render(request, "frontend/modals/register_modal.html", {
+    return render(request, "frontend/modals/register_body.html", {
         "errors": {},
         "form_data": {}
     })

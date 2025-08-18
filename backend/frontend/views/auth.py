@@ -13,7 +13,7 @@ def register_submit(request):
             return JsonResponse({"key": "logged_in"}, status=201)
         else:
             form_data = request.POST.copy()
-            return render(request, "frontend/modals/register_modal.html", {
+            return render(request, "frontend/modals/register_body.html", {
                 "errors": serializer.errors,
                 "form_data": form_data,
             }, status=400)

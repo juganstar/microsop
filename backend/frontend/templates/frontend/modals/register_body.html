@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n socialaccount %}
 
 <div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative" id="modal-content">
   <h2 class="text-2xl font-bold mb-4 text-center">{% trans "Create an account" %}</h2>
@@ -60,6 +60,33 @@
     </button>
   </form>
 
+  <!-- 🔹 Divider -->
+  <div class="flex items-center my-6">
+    <div class="flex-grow border-t border-gray-700"></div>
+    <span class="px-2 text-gray-500 text-sm">{% trans "or" %}</span>
+    <div class="flex-grow border-t border-gray-700"></div>
+  </div>
+
+  <!-- Google button -->
+  <div class="mt-4 not-prose">
+    <a href="{% provider_login_url 'google' process='login' %}"
+      class="block w-full rounded-md border border-white/15 bg-white/5
+              px-4 py-2.5 text-sm text-gray-100 hover:bg-white/10
+              focus:outline-none focus:ring-2 focus:ring-indigo-500
+              focus:ring-offset-3 focus:ring-offset-gray-900 no-underline">
+      <span class="flex items-center justify-center gap-4">
+        <svg viewBox="0 0 24 24" width="35" height="35" aria-hidden="true" class="shrink-0">
+          <path fill="#EA4335" d="M12 11.8v3.6h5.1c-.2 1.3-.9 2.5-2 3.2v2.7h3.2c1.9-1.8 3-4.5 3-7.7 0-.7-.1-1.3-.2-1.9H12z"/>
+          <path fill="#34A853" d="M6.5 14.3l-.8.6-2.6 2 .1.3C4.8 20.9 8.2 23 12 23c2.7 0 5-1 6.6-2.7l-3.2-2.7c-.9.6-2.1.9-3.4.9-2.6 0-4.8-1.8-5.5-4.2z"/>
+          <path fill="#4285F4" d="M3.1 7.1C2.4 8.4 2 9.9 2 11.5s.4 3.1 1.1 4.4l3.4-2.6c-.2-.6-.4-1.2-.4-1.8s.1-1.3.4-1.8z"/>
+          <path fill="#FBBC05" d="M12 4.9c1.5 0 2.9.5 3.9 1.5l2.9-2.9C16.9 1.4 14.6.5 12 .5 8.2.5 4.8 2.6 3.1 6l3.4 2.6c.7-2.4 2.9-4.2 5.5-4.2z"/>
+        </svg>
+        <span class="leading-none">{% trans "Continue with Google" %}</span>
+      </span>
+    </a>
+  </div>
+
+  <!-- 🔹 Switch to login -->
   <div class="mt-4 text-center text-sm text-gray-400">
     {% trans "Already have an account?" %}
     <a 
@@ -73,6 +100,7 @@
     </a>
   </div>
 
+  <!-- Close button -->
   <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
     &times;
   </button>
@@ -96,11 +124,9 @@
         console.error("Error processing registration response:", err);
       }
     } else if (xhr?.status === 400) {
-      // Handle errors here
-      console.error("Error response received:", xhr.response);
       const modalContent = document.getElementById('modal-content');
       if (modalContent) {
-        modalContent.innerHTML = xhr.response; // Assuming the response is HTML
+        modalContent.innerHTML = xhr.response;
       }
     }
   });

@@ -1,13 +1,23 @@
+# Dockerfile.dev (Debian-based, e.g. python:3.11-slim)
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt . 
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# --- OS deps (gettext provides msguniq/msgfmt etc.) ---
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends gettext \
+ && rm -rf /var/lib/apt/lists/*
 
-# Copy .env.dev so OpenAI API key and others work in dev
+# Python deps
+COPY requirements.txt .
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
+
+# (dev convenience)
 COPY .env.dev .env
+
+# If you’re bind-mounting code via docker-compose volumes, you can skip copying the project here.
+# COPY . .

@@ -5,6 +5,12 @@ from rest_framework.response import Response
 from dj_rest_auth.registration.views import RegisterView
 from allauth.account.utils import send_email_confirmation
 from rest_framework.views import APIView
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth import authenticate, login, logout
+from allauth.account.models import EmailAddress
+from django.views.decorators.http import require_POST
+
 
 from accounts.serializers import CustomRegisterSerializer 
 
@@ -40,3 +46,52 @@ class ResendEmailVerificationView(APIView):
 
         send_email_confirmation(request, user)
         return Response({"detail": "Verification email sent."})
+    
+def _render_login_body(request, errors=None, form_data=None, status=200):
+    return render(
+        request,
+        "frontend/modals/_login_body.html",
+        {"errors": errors or {}, "form_data": form_data or {}},
+        status=status,
+    )
+
+@require_POST
+def login_htmx(request):
+    email = (request.POST.get("email") or "").strip().lower()
+    password = request.POST.get("password") or ""
+
+    if not email or not password:
+        return _render_login_body(
+            request,
+            errors={"non_field": "Preencha email e palavra-passe."},
+            form_data={"email": email},
+            status=400,
+        )
+
+    user = authenticate(request, email=email, password=password) or \
+           authenticate(request, username=email, password=password)
+
+    if not user:
+        return _render_login_body(
+            request,
+            errors={"non_field": "Email ou palavra-passe inválidos."},
+            form_data={"email": email},
+            status=400,
+        )
+
+    # Mesma regra do teu CustomLoginSerializer
+    if not EmailAddress.objects.filter(user=user, verified=True).exists():
+        return _render_login_body(
+            request,
+            errors={"non_field": "Email não verificado. Confirme o seu email."},
+            form_data={"email": email},
+            status=400,
+        )
+
+    login(request, user)
+    return JsonResponse({"key": "session", "detail": "login_ok"})
+
+@require_POST
+def logout_htmx(request):
+    logout(request)
+    return HttpResponse(status=204)

@@ -2,25 +2,6 @@
 {% load static i18n %}
 
 {% block content %}
-<!-- 🚀 Trial Activation Modal (on first login) -->
-<div id="trial-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70">
-  <div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 animate-fade-in-up relative">
-    <h2 class="text-2xl font-bold mb-4 text-center">Bem-vindo(a) ao Micro-SOP!</h2>
-    <p class="text-gray-300 text-center mb-6">
-      Ativa já o teu período experimental gratuito. Recebe créditos para gerar SOPs automaticamente.
-    </p>
-    <div class="flex flex-col gap-4">
-      <button 
-        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
-        hx-get="{% url 'trial-config' %}"
-        hx-target="#modal-content"
-        _="on htmx:afterOnLoad wait 10ms then call showModal()">
-        Ativar Período Experimental
-      </button>
-    </div>
-    <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
-  </div>
-</div>
 
 <!-- Hero Section -->
 <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 py-20 bg-gradient-to-br from-gray-900 to-black">
@@ -30,25 +11,31 @@
   <p class="text-xl text-gray-300 max-w-2xl mb-10 animate-fade-in-up delay-100">
     {% trans "Cria e envia procedimentos operacionais com um clique. Para freelancers e pequenas equipas." %}
   </p>
+
   <div class="flex gap-4">
-    <button class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl text-lg" 
-            hx-get="/modal/login" 
-            hx-target="#modal-content" 
-            _="on htmx:afterOnLoad wait 10ms then call showModal()">
+    <!-- Open Login (loads body into global #modal from base.html) -->
+    <button class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl text-lg"
+            hx-get="{% url 'login-modal' %}"
+            hx-target="#modal-content"
+            hx-swap="innerHTML">
       {% trans "Entrar" %}
     </button>
+
+    <!-- Open Register (loads body into global #modal) -->
     <button class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl text-lg border border-gray-600"
-            hx-get="/modal/register/"
-            hx-target="#modal-content" 
-            _="on htmx:afterOnLoad wait 10ms then call showModal()">
+            hx-get="{% url 'register-modal' %}"
+            hx-target="#modal-content"
+            hx-swap="innerHTML">
       {% trans "Criar Conta" %}
     </button>
   </div>
-  <button 
+
+  <!-- Open Trial Config (loads body into global #modal) -->
+  <button
     class="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
     hx-get="{% url 'trial-config' %}"
     hx-target="#modal-content"
-    _="on htmx:afterOnLoad wait 10ms then call showModal()">
+    hx-swap="innerHTML">
     Ativar Período Experimental
   </button>
 </section>
@@ -119,25 +106,43 @@
 <section class="bg-black text-white text-center py-20 animate-fade-in">
   <h2 class="text-3xl font-bold mb-6">{% trans "Pronto para automatizar o teu trabalho?" %}</h2>
   <button class="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl text-lg"
-          hx-get="/modal/register/"
-          hx-target="#modal-content" 
-          _="on htmx:afterOnLoad wait 10ms then call showModal()">
+          hx-get="{% url 'register-modal' %}"
+          hx-target="#modal-content"
+          hx-swap="innerHTML">
     {% trans "Começar agora" %}
   </button>
 </section>
 
-<!-- HTMX Modal -->
-<div id="modal" class="fixed inset-0 hidden bg-black/70 backdrop-blur-sm justify-center items-center z-50">
-  <div id="modal-content" class="bg-gray-900 text-white p-6 rounded-xl w-full max-w-xl shadow-xl">
-    <!-- HTMX loads content here -->
+<!-- ===== Modals (only the Trial modal lives here) ===== -->
+
+<!-- Auto “Trial Activation” Modal (shown when show_trial_modal is true) -->
+<div id="trial-modal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-center justify-center">
+  <div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative mx-4">
+    <h2 class="text-2xl font-bold mb-4 text-center">Bem-vindo(a) ao Micro-SOP!</h2>
+    <p class="text-gray-300 text-center mb-6">
+      Ativa já o teu período experimental gratuito. Recebe créditos para gerar SOPs automaticamente.
+    </p>
+    <div class="flex flex-col gap-4">
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
+        hx-get="{% url 'trial-config' %}"
+        hx-target="#modal-content"
+        hx-swap="innerHTML">
+        Ativar Período Experimental
+      </button>
+    </div>
+    <button onclick="document.getElementById('trial-modal').classList.add('hidden')"
+            class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
   </div>
 </div>
 
 {% if show_trial_modal %}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("trial-modal").style.display = "flex";
+    const t = document.getElementById("trial-modal");
+    if (t) t.classList.remove("hidden");
   });
 </script>
 {% endif %}
+
 {% endblock %}
