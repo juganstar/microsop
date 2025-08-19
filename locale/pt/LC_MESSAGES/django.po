@@ -1,18 +1,16 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Portuguese (Portugal) translations for Micro-SOP project
+# Copyright (C) 2025
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-#, fuzzy
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Micro-SOP 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-18 20:50+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-08-19 21:15+0000\n"
+"PO-Revision-Date: 2025-08-19 22:00+0000\n"
+"Last-Translator: Valdemar <valdemarnoivo@gmail.com>\n"
+"Language-Team: Portuguese\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,195 +18,218 @@ msgstr ""
 
 #: backend/accounts/serializers.py:17 backend/accounts/serializers.py:35
 msgid "This email is already in use."
-msgstr ""
+msgstr "Este email já está a ser utilizado."
 
 #: backend/accounts/serializers.py:22
 msgid "The two password fields didn't match."
-msgstr ""
+msgstr "As duas palavras-passe não coincidem."
 
 #: backend/accounts/serializers.py:47
 msgid "Email not verified. Please confirm your email."
-msgstr ""
+msgstr "Email não verificado. Por favor confirme o seu email."
 
 #: backend/frontend/templates/frontend/home.html:9
-msgid "Gera SOPs Profissionais com IA"
-msgstr ""
+msgid "Generate Professional SOPs with AI"
+msgstr "Gere SOPs profissionais com IA"
 
 #: backend/frontend/templates/frontend/home.html:12
 msgid ""
-"Cria e envia procedimentos operacionais com um clique. Para freelancers e "
-"pequenas equipas."
+"Create and send operational procedures in one click. For freelancers and "
+"small teams."
 msgstr ""
+"Crie e envie procedimentos operacionais num clique. Para freelancers e "
+"pequenas equipas."
 
 #: backend/frontend/templates/frontend/home.html:21
-msgid "Entrar"
-msgstr ""
+#: backend/frontend/templates/frontend/modals/login_body.html:35
+msgid "Login"
+msgstr "Entrar"
 
 #: backend/frontend/templates/frontend/home.html:29
-msgid "Criar Conta"
-msgstr ""
+msgid "Create Account"
+msgstr "Criar conta"
+
+#: backend/frontend/templates/frontend/home.html:39
+#: backend/frontend/templates/frontend/home.html:131
+msgid "Activate Free Trial"
+msgstr "Ativar período de teste gratuito"
 
 #: backend/frontend/templates/frontend/home.html:47
-msgid "Descreve"
-msgstr ""
+msgid "Describe"
+msgstr "Descreva"
 
 #: backend/frontend/templates/frontend/home.html:48
-msgid "Preenche um pequeno formulário com o tipo de SOP que precisas."
-msgstr ""
+msgid "Fill a short form with the type of SOP you need."
+msgstr "Preencha um pequeno formulário com o tipo de SOP que necessita."
 
 #: backend/frontend/templates/frontend/home.html:51
-msgid "Gera"
-msgstr ""
+msgid "Generate"
+msgstr "Gerar"
 
 #: backend/frontend/templates/frontend/home.html:52
-msgid "O nosso motor AI cria automaticamente o conteúdo por ti."
-msgstr ""
+msgid "Our AI engine automatically creates the content for you."
+msgstr "O nosso motor de IA cria automaticamente o conteúdo por si."
 
 #: backend/frontend/templates/frontend/home.html:55
-msgid "Usa"
-msgstr ""
+msgid "Use"
+msgstr "Usar"
 
 #: backend/frontend/templates/frontend/home.html:56
-msgid "Copia, edita ou envia diretamente para os teus clientes."
-msgstr ""
+msgid "Copy, edit, or send directly to your clients."
+msgstr "Copie, edite ou envie diretamente para os seus clientes."
 
 #: backend/frontend/templates/frontend/home.html:64
-msgid "Preços Transparentes"
-msgstr ""
+msgid "Transparent Pricing"
+msgstr "Preços Transparentes"
 
 #: backend/frontend/templates/frontend/home.html:65
-msgid "Planos mensais para cada tipo de profissional."
-msgstr ""
+msgid "Monthly plans for every type of professional."
+msgstr "Planos mensais para todos os tipos de profissionais."
+
+#: backend/frontend/templates/frontend/home.html:69
+#: backend/frontend/templates/frontend/home.html:77
+msgid "month"
+msgstr "mês"
 
 #: backend/frontend/templates/frontend/home.html:71
-msgid "10 gerações por mês"
-msgstr ""
+msgid "10 generations per month"
+msgstr "10 gerações por mês"
 
 #: backend/frontend/templates/frontend/home.html:72
-msgid "Acesso a emails e checklists"
-msgstr ""
+msgid "Access to emails and checklists"
+msgstr "Acesso a emails e checklists"
 
 #: backend/frontend/templates/frontend/home.html:79
-msgid "Gerações ilimitadas"
-msgstr ""
+msgid "Unlimited generations"
+msgstr "Gerações ilimitadas"
 
 #: backend/frontend/templates/frontend/home.html:80
-msgid "Suporte prioritário"
-msgstr ""
+msgid "Priority support"
+msgstr "Suporte prioritário"
 
 #: backend/frontend/templates/frontend/home.html:81
-msgid "Envio SMS (via Twilio)"
-msgstr ""
+msgid "SMS sending (via Twilio)"
+msgstr "Envio de SMS (via Twilio)"
 
 #: backend/frontend/templates/frontend/home.html:91
-msgid "O que dizem os utilizadores"
-msgstr ""
+msgid "What users say"
+msgstr "O que dizem os utilizadores"
 
 #: backend/frontend/templates/frontend/home.html:94
 msgid ""
-"Finalmente consigo enviar emails profissionais em segundos. Poupa-me 2h por "
-"semana."
+"I can finally send professional emails in seconds. Saves me 2 hours a week."
 msgstr ""
+"Finalmente consigo enviar emails profissionais em segundos. Poupou-me 2 "
+"horas por semana."
 
 #: backend/frontend/templates/frontend/home.html:98
 msgid ""
-"Uso isto para cada novo cliente. Parece que tenho uma assistente pessoal."
-msgstr ""
+"I use this for every new client. It feels like I have a personal assistant."
+msgstr "Uso isto para cada novo cliente. É como ter um assistente pessoal."
 
 #: backend/frontend/templates/frontend/home.html:107
-msgid "Pronto para automatizar o teu trabalho?"
-msgstr ""
+msgid "Ready to automate your work?"
+msgstr "Pronto para automatizar o seu trabalho?"
 
 #: backend/frontend/templates/frontend/home.html:112
-msgid "Começar agora"
+msgid "Get started"
+msgstr "Começar"
+
+#: backend/frontend/templates/frontend/home.html:121
+msgid "Welcome to Micro-SOP!"
+msgstr "Bem-vindo ao Micro-SOP!"
+
+#: backend/frontend/templates/frontend/home.html:123
+msgid ""
+"Activate your free trial now. Get credits to generate SOPs automatically."
 msgstr ""
+"Ative já o seu período de teste gratuito. Obtenha créditos para gerar SOPs "
+"automaticamente."
 
 #: backend/frontend/templates/frontend/modals/login_body.html:4
 msgid "Login to your account"
-msgstr ""
+msgstr "Inicie sessão na sua conta"
 
 #: backend/frontend/templates/frontend/modals/login_body.html:21
 #: backend/frontend/templates/frontend/modals/register_body.html:16
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:21
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: backend/frontend/templates/frontend/modals/login_body.html:28
 #: backend/frontend/templates/frontend/modals/register_body.html:30
 msgid "Password"
-msgstr ""
-
-#: backend/frontend/templates/frontend/modals/login_body.html:35
-msgid "Login"
-msgstr ""
+msgstr "Palavra-passe"
 
 #: backend/frontend/templates/frontend/modals/login_body.html:42
 #: backend/frontend/templates/frontend/modals/register_body.html:66
 msgid "or"
-msgstr ""
+msgstr "ou"
 
-#: backend/frontend/templates/frontend/modals/login_body.html:62
+#: backend/frontend/templates/frontend/modals/login_body.html:60
 #: backend/frontend/templates/frontend/modals/register_body.html:84
 msgid "Continue with Google"
-msgstr ""
+msgstr "Continuar com Google"
 
-#: backend/frontend/templates/frontend/modals/login_body.html:72
+#: backend/frontend/templates/frontend/modals/login_body.html:67
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Não tem conta?"
 
-#: backend/frontend/templates/frontend/modals/login_body.html:78
+#: backend/frontend/templates/frontend/modals/login_body.html:73
 msgid "Register here"
-msgstr ""
+msgstr "Registe-se aqui"
 
 #: backend/frontend/templates/frontend/modals/register_body.html:4
 msgid "Create an account"
-msgstr ""
+msgstr "Criar uma conta"
 
 #: backend/frontend/templates/frontend/modals/register_body.html:44
 msgid "Confirm Password"
-msgstr ""
+msgstr "Confirmar Palavra-passe"
 
 #: backend/frontend/templates/frontend/modals/register_body.html:59
 msgid "Register"
-msgstr ""
+msgstr "Registar"
 
 #: backend/frontend/templates/frontend/modals/register_body.html:91
 msgid "Already have an account?"
-msgstr ""
+msgstr "Já tem conta?"
 
 #: backend/frontend/templates/frontend/modals/register_body.html:99
 msgid "Login here"
-msgstr ""
+msgstr "Entrar aqui"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:3
 msgid "Configure Your Trial Experience"
-msgstr ""
+msgstr "Configure a sua experiência de teste"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:5
 msgid ""
 "Choose what you want to generate first. This helps us tailor your experience."
 msgstr ""
+"Escolha o que deseja gerar primeiro. Isto ajuda-nos a adaptar a sua "
+"experiência."
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:19
 msgid "Content Type"
-msgstr ""
+msgstr "Tipo de Conteúdo"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:22
 msgid "Checklist"
-msgstr ""
+msgstr "Checklist"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:23
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:28
 msgid "Primary Goal"
-msgstr ""
+msgstr "Objetivo Principal"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:29
 msgid "e.g. Client onboarding"
-msgstr ""
+msgstr "ex: Integração de cliente"
 
 #: backend/frontend/templates/frontend/modals/trial_config_modal.html:35
 msgid "Activate and Continue"
-msgstr ""
+msgstr "Ativar e Continuar"

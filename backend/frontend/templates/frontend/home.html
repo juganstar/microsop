@@ -6,10 +6,10 @@
 <!-- Hero Section -->
 <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 py-20 bg-gradient-to-br from-gray-900 to-black">
   <h1 class="text-5xl font-extrabold mb-6 tracking-tight animate-fade-in-up">
-    {% trans "Gera SOPs Profissionais com IA" %}
+    {% trans "Generate Professional SOPs with AI" %}
   </h1>
   <p class="text-xl text-gray-300 max-w-2xl mb-10 animate-fade-in-up delay-100">
-    {% trans "Cria e envia procedimentos operacionais com um clique. Para freelancers e pequenas equipas." %}
+    {% trans "Create and send operational procedures in one click. For freelancers and small teams." %}
   </p>
 
   <div class="flex gap-4">
@@ -18,7 +18,7 @@
             hx-get="{% url 'login-modal' %}"
             hx-target="#modal-content"
             hx-swap="innerHTML">
-      {% trans "Entrar" %}
+      {% trans "Login" %}
     </button>
 
     <!-- Open Register (loads body into global #modal) -->
@@ -26,7 +26,7 @@
             hx-get="{% url 'register-modal' %}"
             hx-target="#modal-content"
             hx-swap="innerHTML">
-      {% trans "Criar Conta" %}
+      {% trans "Create Account" %}
     </button>
   </div>
 
@@ -36,7 +36,7 @@
     hx-get="{% url 'trial-config' %}"
     hx-target="#modal-content"
     hx-swap="innerHTML">
-    Ativar Período Experimental
+    {% trans "Activate Free Trial" %}
   </button>
 </section>
 
@@ -44,16 +44,16 @@
 <section class="bg-gray-950 text-white py-20 px-6 animate-fade-in">
   <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-left">
     <div>
-      <h2 class="text-xl font-semibold mb-2">1. {% trans "Descreve" %}</h2>
-      <p class="text-gray-400">{% trans "Preenche um pequeno formulário com o tipo de SOP que precisas." %}</p>
+      <h2 class="text-xl font-semibold mb-2">1. {% trans "Describe" %}</h2>
+      <p class="text-gray-400">{% trans "Fill a short form with the type of SOP you need." %}</p>
     </div>
     <div>
-      <h2 class="text-xl font-semibold mb-2">2. {% trans "Gera" %}</h2>
-      <p class="text-gray-400">{% trans "O nosso motor AI cria automaticamente o conteúdo por ti." %}</p>
+      <h2 class="text-xl font-semibold mb-2">2. {% trans "Generate" %}</h2>
+      <p class="text-gray-400">{% trans "Our AI engine automatically creates the content for you." %}</p>
     </div>
     <div>
-      <h2 class="text-xl font-semibold mb-2">3. {% trans "Usa" %}</h2>
-      <p class="text-gray-400">{% trans "Copia, edita ou envia diretamente para os teus clientes." %}</p>
+      <h2 class="text-xl font-semibold mb-2">3. {% trans "Use" %}</h2>
+      <p class="text-gray-400">{% trans "Copy, edit, or send directly to your clients." %}</p>
     </div>
   </div>
 </section>
@@ -61,24 +61,24 @@
 <!-- Pricing Preview -->
 <section class="bg-black text-white py-20 px-6 animate-fade-in">
   <div class="max-w-4xl mx-auto text-center">
-    <h2 class="text-3xl font-bold mb-6">{% trans "Preços Transparentes" %}</h2>
-    <p class="text-gray-400 mb-10">{% trans "Planos mensais para cada tipo de profissional." %}</p>
+    <h2 class="text-3xl font-bold mb-6">{% trans "Transparent Pricing" %}</h2>
+    <p class="text-gray-400 mb-10">{% trans "Monthly plans for every type of professional." %}</p>
     <div class="grid md:grid-cols-2 gap-8">
       <div class="border border-gray-700 p-6 rounded-xl">
         <h3 class="text-xl font-semibold mb-2">Basic</h3>
-        <p class="text-2xl font-bold">3€ / mês</p>
+        <p class="text-2xl font-bold">€3 / {% trans "month" %}</p>
         <ul class="mt-4 text-gray-400 space-y-2">
-          <li>{% trans "10 gerações por mês" %}</li>
-          <li>{% trans "Acesso a emails e checklists" %}</li>
+          <li>{% trans "10 generations per month" %}</li>
+          <li>{% trans "Access to emails and checklists" %}</li>
         </ul>
       </div>
       <div class="border border-purple-600 p-6 rounded-xl bg-purple-900/10">
         <h3 class="text-xl font-semibold mb-2">Premium</h3>
-        <p class="text-2xl font-bold">5€ / mês</p>
+        <p class="text-2xl font-bold">€5 / {% trans "month" %}</p>
         <ul class="mt-4 text-gray-300 space-y-2">
-          <li>{% trans "Gerações ilimitadas" %}</li>
-          <li>{% trans "Suporte prioritário" %}</li>
-          <li>{% trans "Envio SMS (via Twilio)" %}</li>
+          <li>{% trans "Unlimited generations" %}</li>
+          <li>{% trans "Priority support" %}</li>
+          <li>{% trans "SMS sending (via Twilio)" %}</li>
         </ul>
       </div>
     </div>
@@ -88,15 +88,15 @@
 <!-- Testimonials -->
 <section class="bg-gray-950 text-white py-20 px-6 animate-fade-in">
   <div class="max-w-3xl mx-auto text-center">
-    <h2 class="text-3xl font-bold mb-10">{% trans "O que dizem os utilizadores" %}</h2>
+    <h2 class="text-3xl font-bold mb-10">{% trans "What users say" %}</h2>
     <div class="space-y-10">
       <blockquote class="border-l-4 border-purple-600 pl-4 text-left">
-        <p class="italic">{% trans "Finalmente consigo enviar emails profissionais em segundos. Poupa-me 2h por semana." %}</p>
+        <p class="italic">{% trans "I can finally send professional emails in seconds. Saves me 2 hours a week." %}</p>
         <footer class="text-sm text-gray-400 mt-2">— João, Designer Freelancer</footer>
       </blockquote>
       <blockquote class="border-l-4 border-purple-600 pl-4 text-left">
-        <p class="italic">{% trans "Uso isto para cada novo cliente. Parece que tenho uma assistente pessoal." %}</p>
-        <footer class="text-sm text-gray-400 mt-2">— Ana, Consultora</footer>
+        <p class="italic">{% trans "I use this for every new client. It feels like I have a personal assistant." %}</p>
+        <footer class="text-sm text-gray-400 mt-2">— Ana, Consultant</footer>
       </blockquote>
     </div>
   </div>
@@ -104,12 +104,12 @@
 
 <!-- Final CTA -->
 <section class="bg-black text-white text-center py-20 animate-fade-in">
-  <h2 class="text-3xl font-bold mb-6">{% trans "Pronto para automatizar o teu trabalho?" %}</h2>
+  <h2 class="text-3xl font-bold mb-6">{% trans "Ready to automate your work?" %}</h2>
   <button class="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl text-lg"
           hx-get="{% url 'register-modal' %}"
           hx-target="#modal-content"
           hx-swap="innerHTML">
-    {% trans "Começar agora" %}
+    {% trans "Get started" %}
   </button>
 </section>
 
@@ -118,9 +118,9 @@
 <!-- Auto “Trial Activation” Modal (shown when show_trial_modal is true) -->
 <div id="trial-modal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-center justify-center">
   <div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative mx-4">
-    <h2 class="text-2xl font-bold mb-4 text-center">Bem-vindo(a) ao Micro-SOP!</h2>
+    <h2 class="text-2xl font-bold mb-4 text-center">{% trans "Welcome to Micro-SOP!" %}</h2>
     <p class="text-gray-300 text-center mb-6">
-      Ativa já o teu período experimental gratuito. Recebe créditos para gerar SOPs automaticamente.
+      {% trans "Activate your free trial now. Get credits to generate SOPs automatically." %}
     </p>
     <div class="flex flex-col gap-4">
       <button
@@ -128,7 +128,7 @@
         hx-get="{% url 'trial-config' %}"
         hx-target="#modal-content"
         hx-swap="innerHTML">
-        Ativar Período Experimental
+        {% trans "Activate Free Trial" %}
       </button>
     </div>
     <button onclick="document.getElementById('trial-modal').classList.add('hidden')"

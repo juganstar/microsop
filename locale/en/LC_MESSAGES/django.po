@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-18 20:50+0000\n"
+"POT-Creation-Date: 2025-08-19 21:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,96 +31,115 @@ msgid "Email not verified. Please confirm your email."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:9
-msgid "Gera SOPs Profissionais com IA"
+msgid "Generate Professional SOPs with AI"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:12
 msgid ""
-"Cria e envia procedimentos operacionais com um clique. Para freelancers e "
-"pequenas equipas."
+"Create and send operational procedures in one click. For freelancers and "
+"small teams."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:21
-msgid "Entrar"
+#: backend/frontend/templates/frontend/modals/login_body.html:35
+msgid "Login"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:29
-msgid "Criar Conta"
+msgid "Create Account"
+msgstr ""
+
+#: backend/frontend/templates/frontend/home.html:39
+#: backend/frontend/templates/frontend/home.html:131
+msgid "Activate Free Trial"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:47
-msgid "Descreve"
+msgid "Describe"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:48
-msgid "Preenche um pequeno formulário com o tipo de SOP que precisas."
+msgid "Fill a short form with the type of SOP you need."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:51
-msgid "Gera"
+msgid "Generate"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:52
-msgid "O nosso motor AI cria automaticamente o conteúdo por ti."
+msgid "Our AI engine automatically creates the content for you."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:55
-msgid "Usa"
+msgid "Use"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:56
-msgid "Copia, edita ou envia diretamente para os teus clientes."
+msgid "Copy, edit, or send directly to your clients."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:64
-msgid "Preços Transparentes"
+msgid "Transparent Pricing"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:65
-msgid "Planos mensais para cada tipo de profissional."
+msgid "Monthly plans for every type of professional."
+msgstr ""
+
+#: backend/frontend/templates/frontend/home.html:69
+#: backend/frontend/templates/frontend/home.html:77
+msgid "month"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:71
-msgid "10 gerações por mês"
+msgid "10 generations per month"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:72
-msgid "Acesso a emails e checklists"
+msgid "Access to emails and checklists"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:79
-msgid "Gerações ilimitadas"
+msgid "Unlimited generations"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:80
-msgid "Suporte prioritário"
+msgid "Priority support"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:81
-msgid "Envio SMS (via Twilio)"
+msgid "SMS sending (via Twilio)"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:91
-msgid "O que dizem os utilizadores"
+msgid "What users say"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:94
 msgid ""
-"Finalmente consigo enviar emails profissionais em segundos. Poupa-me 2h por "
-"semana."
+"I can finally send professional emails in seconds. Saves me 2 hours a week."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:98
 msgid ""
-"Uso isto para cada novo cliente. Parece que tenho uma assistente pessoal."
+"I use this for every new client. It feels like I have a personal assistant."
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:107
-msgid "Pronto para automatizar o teu trabalho?"
+msgid "Ready to automate your work?"
 msgstr ""
 
 #: backend/frontend/templates/frontend/home.html:112
-msgid "Começar agora"
+msgid "Get started"
+msgstr ""
+
+#: backend/frontend/templates/frontend/home.html:121
+msgid "Welcome to Micro-SOP!"
+msgstr ""
+
+#: backend/frontend/templates/frontend/home.html:123
+msgid ""
+"Activate your free trial now. Get credits to generate SOPs automatically."
 msgstr ""
 
 #: backend/frontend/templates/frontend/modals/login_body.html:4
@@ -138,25 +157,21 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: backend/frontend/templates/frontend/modals/login_body.html:35
-msgid "Login"
-msgstr ""
-
 #: backend/frontend/templates/frontend/modals/login_body.html:42
 #: backend/frontend/templates/frontend/modals/register_body.html:66
 msgid "or"
 msgstr ""
 
-#: backend/frontend/templates/frontend/modals/login_body.html:62
+#: backend/frontend/templates/frontend/modals/login_body.html:60
 #: backend/frontend/templates/frontend/modals/register_body.html:84
 msgid "Continue with Google"
 msgstr ""
 
-#: backend/frontend/templates/frontend/modals/login_body.html:72
+#: backend/frontend/templates/frontend/modals/login_body.html:67
 msgid "Don't have an account?"
 msgstr ""
 
-#: backend/frontend/templates/frontend/modals/login_body.html:78
+#: backend/frontend/templates/frontend/modals/login_body.html:73
 msgid "Register here"
 msgstr ""
 
