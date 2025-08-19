@@ -3,7 +3,7 @@
 📌 Overview
 
 MicroSOP is a work-in-progress SaaS platform designed to help service providers and small teams generate professional SOPs (Standard Operating Procedures), checklists, and client communication assets in seconds.
-The mission is simple: reduce the time from idea to delivery by letting AI handle the formatting and structure, so you can focus on the actual work.
+The mission is simple: reduce the time from idea to delivery by letting AI handle the formatting and structure, so you can focus on the actual work. will have multiple structures to increase productivity.
 
 🛠 Tech Stack
 Backend: Django + Django REST Framework
