@@ -9,7 +9,7 @@ from frontend.views.dashboard import (
 
 from frontend.views.modals import trial_config_modal, login_modal, register_modal
 from frontend.views.trial import activate_trial
-from frontend.views.auth import register_submit
+from frontend.views.auth import register_submit, logout_submit
 
 
 urlpatterns = [
@@ -23,6 +23,7 @@ urlpatterns = [
 
     # MODALS
     path("modal/login/", login_modal, name="login-modal"),
+    path("logout/", logout_submit, name="logout-submit"),
     path("modal/register/", register_modal, name="register-modal"),  # GET
     path("modal/register/submit/", register_submit, name="custom-register-htmx"),  # POST
 ]

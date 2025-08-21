@@ -13,21 +13,31 @@
   </p>
 
   <div class="flex gap-4">
-    <!-- Open Login (loads body into global #modal from base.html) -->
-    <button class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl text-lg"
-            hx-get="{% url 'login-modal' %}"
-            hx-target="#modal-content"
-            hx-swap="innerHTML">
-      {% trans "Login" %}
-    </button>
-
-    <!-- Open Register (loads body into global #modal) -->
-    <button class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl text-lg border border-gray-600"
-            hx-get="{% url 'register-modal' %}"
-            hx-target="#modal-content"
-            hx-swap="innerHTML">
-      {% trans "Create Account" %}
-    </button>
+    {% if user.is_authenticated %}
+      <!-- Logout (POST, redirects to home) -->
+      <form method="post" action="{% url 'logout-submit' %}">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl text-lg">
+          {% trans "Logout" %}
+        </button>
+      </form>
+    {% else %}
+      <!-- Open Login (loads body into global #modal from base.html) -->
+      <button class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl text-lg"
+              hx-get="{% url 'login-modal' %}"
+              hx-target="#modal-content"
+              hx-swap="innerHTML">
+        {% trans "Login" %}
+      </button>
+    
+      <!-- Open Register (loads body into global #modal) -->
+      <button class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl text-lg border border-gray-600"
+              hx-get="{% url 'register-modal' %}"
+              hx-target="#modal-content"
+              hx-swap="innerHTML">
+        {% trans "Create Account" %}
+      </button>
+    {% endif %}
   </div>
 
   <!-- Open Trial Config (loads body into global #modal) -->
@@ -37,6 +47,15 @@
     hx-target="#modal-content"
     hx-swap="innerHTML">
     {% trans "Activate Free Trial" %}
+  </button>
+
+  <!-- Generate SOP button directly under the trial button -->
+  <button
+    class="mt-3 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
+    hx-get="{% url 'generate-form' %}"
+    hx-target="#modal-content"
+    hx-swap="innerHTML">
+    {% trans "Generate SOP" %}
   </button>
 </section>
 
@@ -105,12 +124,21 @@
 <!-- Final CTA -->
 <section class="bg-black text-white text-center py-20 animate-fade-in">
   <h2 class="text-3xl font-bold mb-6">{% trans "Ready to automate your work?" %}</h2>
-  <button class="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl text-lg"
-          hx-get="{% url 'register-modal' %}"
-          hx-target="#modal-content"
-          hx-swap="innerHTML">
-    {% trans "Get started" %}
-  </button>
+  {% if user.is_authenticated %}
+    <button class="bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-xl text-lg"
+            hx-get="{% url 'generate-form' %}"
+            hx-target="#modal-content"
+            hx-swap="innerHTML">
+      {% trans "Generate SOP" %}
+    </button>
+  {% else %}
+    <button class="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl text-lg"
+            hx-get="{% url 'register-modal' %}"
+            hx-target="#modal-content"
+            hx-swap="innerHTML">
+      {% trans "Get started" %}
+    </button>
+  {% endif %}
 </section>
 
 <!-- ===== Modals (only the Trial modal lives here) ===== -->
@@ -129,6 +157,15 @@
         hx-target="#modal-content"
         hx-swap="innerHTML">
         {% trans "Activate Free Trial" %}
+      </button>
+
+      <!-- Generate SOP from inside the trial modal -->
+      <button
+        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
+        hx-get="{% url 'generate-form' %}"
+        hx-target="#modal-content"
+        hx-swap="innerHTML">
+        {% trans "Generate SOP" %}
       </button>
     </div>
     <button onclick="document.getElementById('trial-modal').classList.add('hidden')"

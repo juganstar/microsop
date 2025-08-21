@@ -1,18 +1,18 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from dj_rest_auth.registration.views import RegisterView
-from allauth.account.utils import send_email_confirmation
-from rest_framework.views import APIView
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from dj_rest_auth.registration.views import RegisterView
+from allauth.account.utils import send_email_confirmation
 from allauth.account.models import EmailAddress
-from django.views.decorators.http import require_POST
 
-
-from accounts.serializers import CustomRegisterSerializer 
+from accounts.serializers import CustomRegisterSerializer
 
 
 def home(request):
@@ -21,7 +21,6 @@ def home(request):
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
-
 
 
 @api_view(["GET"])
@@ -43,17 +42,18 @@ class ResendEmailVerificationView(APIView):
         user = request.user
         if user.emailaddress_set.filter(verified=True).exists():
             return Response({"detail": "Email is already verified."}, status=400)
-
         send_email_confirmation(request, user)
         return Response({"detail": "Verification email sent."})
-    
+
+
 def _render_login_body(request, errors=None, form_data=None, status=200):
     return render(
         request,
-        "frontend/modals/_login_body.html",
+        "frontend/modals/login_body.html",
         {"errors": errors or {}, "form_data": form_data or {}},
         status=status,
     )
+
 
 @require_POST
 def login_htmx(request):
@@ -65,9 +65,10 @@ def login_htmx(request):
             request,
             errors={"non_field": "Preencha email e palavra-passe."},
             form_data={"email": email},
-            status=400,
+            status=422,
         )
 
+    # Try both (depends on your AUTHENTICATION_BACKENDS / USERNAME_FIELD)
     user = authenticate(request, email=email, password=password) or \
            authenticate(request, username=email, password=password)
 
@@ -76,20 +77,21 @@ def login_htmx(request):
             request,
             errors={"non_field": "Email ou palavra-passe inválidos."},
             form_data={"email": email},
-            status=400,
+            status=422,
         )
 
-    # Mesma regra do teu CustomLoginSerializer
+    # Enforce verified email (same rule as your CustomLoginSerializer)
     if not EmailAddress.objects.filter(user=user, verified=True).exists():
         return _render_login_body(
             request,
             errors={"non_field": "Email não verificado. Confirme o seu email."},
             form_data={"email": email},
-            status=400,
+            status=422,
         )
 
     login(request, user)
     return JsonResponse({"key": "session", "detail": "login_ok"})
+
 
 @require_POST
 def logout_htmx(request):
