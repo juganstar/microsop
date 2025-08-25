@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from accounts.models import Profile  # importa o teu modelo de Profile
+from django.views.decorators.csrf import ensure_csrf_cookie
 
+@ensure_csrf_cookie
 def home(request):
     show_trial_modal = False
 

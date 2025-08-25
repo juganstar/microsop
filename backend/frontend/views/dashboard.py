@@ -11,7 +11,7 @@ from generator.openai_client import generate_micro_sop
 @method_decorator(login_required, name='dispatch')
 class GenerateFormView(View):
     def get(self, request):
-        return render(request, "frontend/partials/generate_form.html")
+        return render(request, "frontend/modals/generate_body.html", {"form_data": {}, "errors": {}})
 
 @method_decorator(login_required, name='dispatch')
 class GenerateSOPView(View):
@@ -32,12 +32,6 @@ class GenerateSOPView(View):
         )
 
         return render(request, "frontend/partials/generate_result.html", {"result": result})
-
-@method_decorator(login_required, name='dispatch')
-class UserAssetsView(View):
-    def get(self, request):
-        assets = GeneratedAsset.objects.filter(user=request.user).order_by("-created_at")[:20]
-        return render(request, "frontend/partials/assets_list.html", {"assets": assets})
 
 @method_decorator(login_required, name='dispatch')
 class UsageTrackerView(View):

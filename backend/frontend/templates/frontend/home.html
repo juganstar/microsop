@@ -52,7 +52,7 @@
   <!-- Generate SOP button directly under the trial button -->
   <button
     class="mt-3 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
-    hx-get="{% url 'generate-form' %}"
+    hx-get="{% url 'api-generate-form' %}"
     hx-target="#modal-content"
     hx-swap="innerHTML">
     {% trans "Generate SOP" %}
@@ -126,7 +126,7 @@
   <h2 class="text-3xl font-bold mb-6">{% trans "Ready to automate your work?" %}</h2>
   {% if user.is_authenticated %}
     <button class="bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-xl text-lg"
-            hx-get="{% url 'generate-form' %}"
+            hx-get="{% url 'api-generate-form' %}"
             hx-target="#modal-content"
             hx-swap="innerHTML">
       {% trans "Generate SOP" %}
@@ -141,43 +141,22 @@
   {% endif %}
 </section>
 
-<!-- ===== Modals (only the Trial modal lives here) ===== -->
-
-<!-- Auto “Trial Activation” Modal (shown when show_trial_modal is true) -->
-<div id="trial-modal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-center justify-center">
-  <div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative mx-4">
-    <h2 class="text-2xl font-bold mb-4 text-center">{% trans "Welcome to Micro-SOP!" %}</h2>
-    <p class="text-gray-300 text-center mb-6">
-      {% trans "Activate your free trial now. Get credits to generate SOPs automatically." %}
-    </p>
-    <div class="flex flex-col gap-4">
-      <button
-        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
-        hx-get="{% url 'trial-config' %}"
-        hx-target="#modal-content"
-        hx-swap="innerHTML">
-        {% trans "Activate Free Trial" %}
-      </button>
-
-      <!-- Generate SOP from inside the trial modal -->
-      <button
-        class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl shadow-lg transition duration-200"
-        hx-get="{% url 'generate-form' %}"
-        hx-target="#modal-content"
-        hx-swap="innerHTML">
-        {% trans "Generate SOP" %}
-      </button>
-    </div>
-    <button onclick="document.getElementById('trial-modal').classList.add('hidden')"
-            class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
-  </div>
-</div>
+{# ===== Trial Modal (auto-open via global modal) ===== #}
 
 {% if show_trial_modal %}
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const t = document.getElementById("trial-modal");
-    if (t) t.classList.remove("hidden");
+  document.addEventListener('DOMContentLoaded', () => {
+    // If an old inline trial-modal exists, nuke it (defensive).
+    const legacy = document.getElementById('trial-modal');
+    if (legacy) legacy.remove();
+
+    // Load the trial-config partial into the global modal body.
+    if (window.htmx) {
+      htmx.ajax('GET', "{% url 'trial-config' %}", '#modal-content');
+    } else {
+      // Fallback if HTMX isn’t loaded for some reason.
+      window.location.href = "{% url 'trial-config' %}";
+    }
   });
 </script>
 {% endif %}

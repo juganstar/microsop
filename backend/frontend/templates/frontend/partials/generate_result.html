@@ -1,4 +1,82 @@
-<div class="bg-white p-6 mt-4 rounded-xl shadow text-sm whitespace-pre-wrap">
-  <h2 class="text-lg font-semibold mb-2">Resultado:</h2>
-  <div>{{ result }}</div>
+{% load i18n %}
+<div id="result-box" class="bg-gray-800 text-white rounded-xl p-4 space-y-4">
+  {% if error %}
+    <div class="rounded-lg bg-red-600/10 border border-red-500 px-3 py-2 text-sm text-red-200">
+      {{ error }}
+    </div>
+  {% else %}
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold">{% trans "Result" %}</h3>
+      <button
+        id="copy-btn"
+        type="button"
+        class="bg-white/10 hover:bg-white/20 text-sm px-3 py-1 rounded"
+        data-copy="{% trans 'Copy' %}"
+        data-copied="{% trans 'Copied!' %}"
+        onclick="(function(b){
+          const t = document.getElementById('sop-plain')?.textContent || '';
+          navigator.clipboard.writeText(t).then(() => {
+            b.textContent = b.dataset.copied;
+            setTimeout(() => { b.textContent = b.dataset.copy; }, 1200);
+          });
+        })(this)"
+      >
+        {% trans "Copy" %}
+      </button>
+    </div>
+
+    <pre id="sop-plain" class="whitespace-pre-wrap break-words text-sm leading-relaxed">{{ plain_text }}</pre>
+
+    {% if calendar_suggestion %}
+      <div class="border-t border-white/10 pt-3">
+        <h4 class="font-semibold mb-2">{% trans "Add to calendar" %}</h4>
+
+        <form
+          hx-post="{% url 'calendar-add' %}"
+          hx-target="#calendar-feedback"
+          hx-swap="innerHTML"
+          hx-headers='js:{"X-CSRFToken": getCookie("csrftoken")}'
+          class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm"
+        >
+          {% csrf_token %}
+
+          <input type="text" name="title"
+                 class="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                 placeholder="{% trans 'Title' %}"
+                 value="{{ calendar_suggestion.title|default_if_none:'' }}">
+
+          <input type="text" name="location"
+                 class="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                 placeholder="{% trans 'Location' %}"
+                 value="{{ calendar_suggestion.location|default_if_none:'' }}">
+
+          <input type="date" name="date"
+                 class="bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                 value="{{ calendar_suggestion.date|default_if_none:'' }}">
+
+          <div class="flex gap-2">
+            <input type="time" name="start_time"
+                   class="bg-gray-900 border border-gray-700 rounded px-3 py-2 w-full"
+                   value="{{ calendar_suggestion.start_time|default_if_none:'' }}">
+            <input type="time" name="end_time"
+                   class="bg-gray-900 border border-gray-700 rounded px-3 py-2 w-full"
+                   value="{{ calendar_suggestion.end_time|default_if_none:'' }}">
+          </div>
+
+          <div class="md:col-span-2">
+            <textarea name="description" rows="2"
+                      class="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2"
+                      placeholder="{% trans 'Notes' %}">{{ calendar_suggestion.description|default_if_none:'' }}</textarea>
+          </div>
+
+          <div class="md:col-span-2 flex items-center gap-3">
+            <button type="submit" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">
+              {% trans "Add event" %}
+            </button>
+            <div id="calendar-feedback" class="text-xs text-gray-300"></div>
+          </div>
+        </form>
+      </div>
+    {% endif %}
+  {% endif %}
 </div>

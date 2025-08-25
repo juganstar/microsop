@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}Micro-SOP Generator{% endblock %}</title>
 
-    <!-- Tailwind bundle you build (include your utilities/components) -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
     <!-- HTMX (+ optional helpers) -->
@@ -17,48 +16,101 @@
   </head>
 
   <body class="bg-gray-950 text-white antialiased">
-    <!-- (Optional) Navbar goes here -->
-
     <main class="min-h-screen px-6 py-10">
       {% block content %}{% endblock %}
     </main>
 
-    <div id="modal"
-        class="fixed inset-0 hidden z-50 bg-black/60 backdrop-blur-sm
-                flex items-center justify-center p-4">
-      <!-- HTMX swaps into this -->
-      <div id="modal-content" class="w-full max-w-md"></div>
+    <!-- ========= Global Modal (single overlay, safe clicks) ========= -->
+    <style>
+      /* When hidden, make sure the overlay never eats clicks */
+      #modal.hidden { pointer-events: none !important; }
+    </style>
+
+    <div id="modal" class="fixed inset-0 z-50 hidden pointer-events-none">
+      <!-- Backdrop (click closes) -->
+      <div id="modal-backdrop"
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-150"
+          onclick="closeModal()"></div>
+
+      <!-- Body target (HTMX swaps into here) -->
+      <div id="modal-content"
+          class="relative z-10 w-full max-w-md mx-auto translate-y-2 opacity-0 transition duration-150">
+      </div>
     </div>
 
-    <!-- Modal helpers -->
     <script>
-      function showModal() {
-        const m = document.getElementById('modal');
-        if (m) m.classList.remove('hidden');
+      function getCookie(name){
+        const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+        return m ? decodeURIComponent(m[2]) : null;
       }
-      function closeModal() {
-        const m = document.getElementById('modal');
-        if (!m) return;
-        m.classList.add('hidden');
-        const c = document.getElementById('modal-content');
-        if (c) c.innerHTML = '';
+      document.body.addEventListener('htmx:configRequest', (e) => {
+        const token = getCookie('csrftoken');  // default Django cookie name
+        if (token) e.detail.headers['X-CSRFToken'] = token;
+      });
+
+      // --- Modal helpers ---
+      function showModal(){
+        const modal    = document.getElementById('modal');
+        const backdrop = document.getElementById('modal-backdrop');
+        const content  = document.getElementById('modal-content');
+        if (!modal || !backdrop || !content) return;
+
+        // make interactive & visible
+        modal.classList.remove('hidden','pointer-events-none');
+        backdrop.style.opacity = '1';
+        content.style.opacity  = '1';
+        content.style.transform = 'translateY(0)';
+        document.body.classList.add('overflow-hidden');
       }
 
-      // Open automatically whenever HTMX swaps into #modal-content
+      function closeModal(){
+        const modal    = document.getElementById('modal');
+        const backdrop = document.getElementById('modal-backdrop');
+        const content  = document.getElementById('modal-content');
+        if (!modal || !backdrop || !content) return;
+
+        // clear the body so next open starts fresh
+        content.innerHTML = '';
+
+        // instantly non-interactive
+        modal.classList.add('hidden','pointer-events-none');
+
+        // reset visuals for next open
+        backdrop.style.opacity = '0';
+        content.style.opacity  = '0';
+        content.style.transform = 'translateY(0.5rem)';
+
+        document.body.classList.remove('overflow-hidden');
+      }
+      window.closeModal = closeModal;
+
+      // Ensure the target exists before HTMX swaps (in case a partial removed it)
+      document.body.addEventListener('htmx:beforeRequest', (e) => {
+        // Only care about requests that target #modal-content
+        const tgt = e.target?.getAttribute?.('hx-target') || '';
+        if (tgt === '#modal-content' && !document.getElementById('modal-content')) {
+          // Rebuild skeleton if someone nuked it
+          const modal = document.getElementById('modal');
+          if (modal) {
+            modal.innerHTML = `
+              <div id="modal-backdrop"
+                  class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-150"
+                  onclick="closeModal()"></div>
+              <div id="modal-content"
+                  class="relative z-10 w-full max-w-md mx-auto translate-y-2 opacity-0 transition duration-150">
+              </div>
+            `;
+          }
+        }
+      });
+
+      // Auto-show when HTMX swaps into #modal-content
       document.body.addEventListener('htmx:afterSwap', (e) => {
         if (e.detail?.target?.id === 'modal-content') showModal();
       });
 
-      // Close on ESC
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-      });
-
-      // Close when clicking the backdrop (but not inside the card)
-      document.addEventListener('click', (e) => {
-        const m = document.getElementById('modal');
-        if (m && e.target === m) closeModal();
-      });
+      // ESC to close
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     </script>
   </body>
 </html>

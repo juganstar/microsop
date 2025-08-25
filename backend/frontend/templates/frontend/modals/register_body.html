@@ -1,6 +1,6 @@
 {% load i18n socialaccount %}
 
-<div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative" id="modal-content">
+<div class="bg-gray-900 text-white rounded-2xl shadow-xl max-w-md w-full p-8 relative" id="modal">
   <h2 class="text-2xl font-bold mb-4 text-center">{% trans "Create an account" %}</h2>
 
   <form 
@@ -124,7 +124,7 @@
         console.error("Error processing registration response:", err);
       }
     } else if (xhr?.status === 400) {
-      const modalContent = document.getElementById('modal-content');
+      const modalContent = document.getElementById('modal');
       if (modalContent) {
         modalContent.innerHTML = xhr.response;
       }
