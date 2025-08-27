@@ -1,0 +1,8 @@
+<form
+  hx-post="{% url 'csrf-probe-submit' %}"
+  hx-target="#out"
+  hx-swap="innerHTML">
+  {% csrf_token %}
+  <button>Probe</button>
+</form>
+<div id="out"></div>

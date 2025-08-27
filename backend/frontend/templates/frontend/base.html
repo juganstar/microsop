@@ -8,11 +8,11 @@
     <title>{% block title %}Micro-SOP Generator{% endblock %}</title>
 
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="icon" href="{% static 'favicon.ico' %}" />
 
     <!-- HTMX (+ optional helpers) -->
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/transition.js" defer></script>
   </head>
 
   <body class="bg-gray-950 text-white antialiased">
@@ -29,22 +29,39 @@
     <div id="modal" class="fixed inset-0 z-50 hidden pointer-events-none">
       <!-- Backdrop (click closes) -->
       <div id="modal-backdrop"
-          class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-150"
-          onclick="closeModal()"></div>
+           class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-150"
+           onclick="closeModal()"></div>
 
       <!-- Body target (HTMX swaps into here) -->
       <div id="modal-content"
-          class="relative z-10 w-full max-w-md mx-auto translate-y-2 opacity-0 transition duration-150">
+           class="relative z-10 w-full max-w-md mx-auto translate-y-2 opacity-0 transition duration-150">
       </div>
     </div>
 
     <script>
-      function getCookie(name){
-        const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
-        return m ? decodeURIComponent(m[2]) : null;
-      }
+      function getCSRFCookie(){
+          const m = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+          return m ? decodeURIComponent(m[1]) : "";
+        }
+
+        document.body.addEventListener('htmx:configRequest', (evt) => {
+          evt.detail.headers['X-CSRFToken'] = getCSRFCookie();
+        });
+
+        // optional: debug what we send
+        document.body.addEventListener('htmx:configRequest', (evt) => {
+          console.log('X-CSRFToken ->', evt.detail.headers['X-CSRFToken']);
+        });
+
+      // Always attach a valid CSRF header to HTMX requests.
+      // Prefer cookie; if missing, fall back to the nearest form's hidden field.
       document.body.addEventListener('htmx:configRequest', (e) => {
-        const token = getCookie('csrftoken');  // default Django cookie name
+        let token = getCookie('csrftoken');
+        if (!token) {
+          const form = e.target.closest && e.target.closest('form');
+          const inp  = form && form.querySelector('input[name="csrfmiddlewaretoken"]');
+          if (inp) token = inp.value;
+        }
         if (token) e.detail.headers['X-CSRFToken'] = token;
       });
 
@@ -86,18 +103,16 @@
 
       // Ensure the target exists before HTMX swaps (in case a partial removed it)
       document.body.addEventListener('htmx:beforeRequest', (e) => {
-        // Only care about requests that target #modal-content
         const tgt = e.target?.getAttribute?.('hx-target') || '';
         if (tgt === '#modal-content' && !document.getElementById('modal-content')) {
-          // Rebuild skeleton if someone nuked it
           const modal = document.getElementById('modal');
           if (modal) {
             modal.innerHTML = `
               <div id="modal-backdrop"
-                  class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-150"
-                  onclick="closeModal()"></div>
+                   class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-150"
+                   onclick="closeModal()"></div>
               <div id="modal-content"
-                  class="relative z-10 w-full max-w-md mx-auto translate-y-2 opacity-0 transition duration-150">
+                   class="relative z-10 w-full max-w-md mx-auto translate-y-2 opacity-0 transition duration-150">
               </div>
             `;
           }

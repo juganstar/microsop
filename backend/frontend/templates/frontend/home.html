@@ -77,31 +77,139 @@
   </div>
 </section>
 
-<!-- Pricing Preview -->
+<!-- Pricing & Plans -->
 <section class="bg-black text-white py-20 px-6 animate-fade-in">
   <div class="max-w-4xl mx-auto text-center">
     <h2 class="text-3xl font-bold mb-6">{% trans "Transparent Pricing" %}</h2>
-    <p class="text-gray-400 mb-10">{% trans "Monthly plans for every type of professional." %}</p>
-    <div class="grid md:grid-cols-2 gap-8">
+    <p class="text-gray-400 mb-10">{% trans "Choose the plan that fits your workflow." %}</p>
+
+    <div class="grid md:grid-cols-3 gap-8 text-left">
+
+      <!-- Trial -->
+      <div class="border border-gray-700 p-6 rounded-xl">
+        <h3 class="text-xl font-semibold mb-2">{% trans "Trial" %}</h3>
+        <p class="text-2xl font-bold">€0 / {% trans "month" %}</p>
+        <ul class="mt-4 text-gray-400 space-y-2 text-sm">
+          <li>{% trans "5 generations (one-time)" %}</li>
+          <li>{% trans "No credit card required" %}</li>
+          <li>{% trans "Upgrade anytime" %}</li>
+        </ul>
+
+        <div class="mt-6">
+          {% if user.is_authenticated %}
+            <button
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl"
+              hx-get="{% url 'trial-config' %}"
+              hx-target="#modal-content"
+              hx-swap="innerHTML">
+              {% trans "Activate Free Trial" %}
+            </button>
+          {% else %}
+            <button
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl"
+              hx-get="{% url 'login-modal' %}"
+              hx-target="#modal-content"
+              hx-swap="innerHTML">
+              {% trans "Login to start" %}
+            </button>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Basic -->
       <div class="border border-gray-700 p-6 rounded-xl">
         <h3 class="text-xl font-semibold mb-2">Basic</h3>
-        <p class="text-2xl font-bold">€3 / {% trans "month" %}</p>
-        <ul class="mt-4 text-gray-400 space-y-2">
-          <li>{% trans "10 generations per month" %}</li>
-          <li>{% trans "Access to emails and checklists" %}</li>
+        <p class="text-2xl font-bold">€10 / {% trans "month" %}</p>
+        <ul class="mt-4 text-gray-400 space-y-2 text-sm">
+          <li>{% trans "100 generations / month" %}</li>
+          <li>{% trans "Commercial use" %}</li>
+          <li>{% trans "Email & checklist formats" %}</li>
         </ul>
+
+        <div class="mt-6">
+          {% if user.is_authenticated %}
+            <button
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl"
+              onclick="stripeSubscribe('{% url 'billing:subscribe_basic' %}')">
+              {% trans "Subscribe Basic" %} (€10)
+            </button>
+          {% else %}
+            <button
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl"
+              hx-get="{% url 'login-modal' %}"
+              hx-target="#modal-content"
+              hx-swap="innerHTML">
+              {% trans "Login to subscribe" %}
+            </button>
+          {% endif %}
+        </div>
       </div>
+
+      <!-- Premium -->
       <div class="border border-purple-600 p-6 rounded-xl bg-purple-900/10">
         <h3 class="text-xl font-semibold mb-2">Premium</h3>
-        <p class="text-2xl font-bold">€5 / {% trans "month" %}</p>
-        <ul class="mt-4 text-gray-300 space-y-2">
-          <li>{% trans "Unlimited generations" %}</li>
+        <p class="text-2xl font-bold">€15 / {% trans "month" %}</p>
+        <ul class="mt-4 text-gray-300 space-y-2 text-sm">
+          <li>{% trans "200 generations / month" %}</li>
           <li>{% trans "Priority support" %}</li>
           <li>{% trans "SMS sending (via Twilio)" %}</li>
         </ul>
+
+        <div class="mt-6">
+          {% if user.is_authenticated %}
+            <button
+              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl"
+              onclick="stripeSubscribe('{% url 'billing:subscribe_premium' %}')">
+              {% trans "Subscribe Premium" %} (€15)
+            </button>
+          {% else %}
+            <button
+              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl"
+              hx-get="{% url 'login-modal' %}"
+              hx-target="#modal-content"
+              hx-swap="innerHTML">
+              {% trans "Login to subscribe" %}
+            </button>
+          {% endif %}
+        </div>
       </div>
     </div>
+
+    {% if user.is_authenticated %}
+      <div class="mt-10">
+        <button
+          class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded-xl"
+          onclick="stripePortal('{% url 'billing:customer_portal' %}')">
+          {% trans "Manage billing" %}
+        </button>
+        <p class="text-xs text-gray-500 mt-2">{% trans "Cancel anytime via Stripe." %}</p>
+      </div>
+    {% endif %}
   </div>
+
+  <!-- Minimal JS helpers for Stripe POST + redirect -->
+  <script>
+    (function(){
+      function getCookie(name){
+        const m = document.cookie.match(new RegExp('(?:^| )' + name + '=([^;]+)'));
+        return m ? decodeURIComponent(m[1]) : null;
+      }
+      window.stripeSubscribe = function(url){
+        const token = getCookie('csrftoken');
+        fetch(url, { method:'POST', headers:{ 'X-CSRFToken': token || '' } })
+          .then(r => r.json())
+          .then(d => { if (d.url) window.location = d.url; })
+          .catch(()=>{ /* optionally show a toast */ });
+      };
+      window.stripePortal = function(url){
+        const token = getCookie('csrftoken');
+        fetch(url, { method:'POST', headers:{ 'X-CSRFToken': token || '' } })
+          .then(r => r.json())
+          .then(d => { if (d.url) window.location = d.url; })
+          .catch(()=>{ /* optionally show a toast */ });
+      };
+    })();
+  </script>
 </section>
 
 <!-- Testimonials -->

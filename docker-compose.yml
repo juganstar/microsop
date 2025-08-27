@@ -11,6 +11,12 @@ services:
       - .env.dev
     depends_on:
       - db
+    environment:
+      - STRIPE_SECRET_KEY=sk_live_or_test_xxx
+      - STRIPE_PUBLISHABLE_KEY=pk_live_or_test_xxx
+      - STRIPE_WEBHOOK_SECRET=whsec_xxx
+      - STRIPE_PRICE_BASIC=price_123
+      - STRIPE_PRICE_PREMIUM=price_456
 
   db:
     image: postgres:15

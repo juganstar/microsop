@@ -16,7 +16,23 @@ from generator.openai_client import generate_micro_sop
 from generator.models import GeneratedAsset
 from generator.serializers import GeneratedAssetSerializer
 
-from billing.utils import get_credits_used_this_month, get_monthly_limit_for_user
+# --- Billing utils (support both new+old styles) ---
+USE_NEW_CREDIT = False
+try:
+    # New helpers we proposed (free, trial, paid, top-ups)
+    from billing.utils import (
+        get_credits_used_this_month,
+        credit_gate,
+        consume_post_success,
+    )
+    USE_NEW_CREDIT = True
+except Exception:
+    # Fallback to your previous API
+    from billing.utils import (
+        get_credits_used_this_month,
+        get_monthly_limit_for_user,
+    )
+
 from billing.models import UsageRecord
 
 CREDITS_PER_SOP = 1
@@ -24,51 +40,60 @@ ALLOWED_NICHES = {"general", "freelance", "consulting", "events", "coaching", "d
 
 
 def _result_to_plain_text(result):
+    """Convert generator JSON to readable text; resilient to missing keys."""
     try:
         if not isinstance(result, dict):
             return str(result)
+
         lines = []
         title = result.get("title")
         if title:
             lines += [title, ""]
-        if result.get("body"):
-            lines.append(result["body"])
-        if result.get("sms"):
-            lines += ["", "SMS:", result["sms"]]
-        if result.get("checklist"):
+
+        body = result.get("body")
+        if body:
+            lines.append(body)
+
+        sms = result.get("sms")
+        if sms:
+            lines += ["", "SMS:", sms]
+
+        checklist = result.get("checklist")
+        if checklist:
             lines += ["", "Checklist:"]
-            for i, item in enumerate(result["checklist"], 1):
+            for i, item in enumerate(checklist, 1):
                 lines.append(f"{i}. {item}")
-        if result.get("payment_note"):
-            lines += ["", result["payment_note"]]
-        if result.get("signature"):
-            lines += ["", result["signature"]]
+
+        payment_note = result.get("payment_note")
+        if payment_note:
+            lines += ["", payment_note]
+
+        signature = result.get("signature")
+        if signature:
+            lines += ["", signature]
+
         return "\n".join(lines).strip() or str(result)
     except Exception:
         return str(result)
 
 
-@method_decorator(
-    [
-        login_required,
-        csrf_protect,
-        ratelimit(key="user", rate="5/m", method="POST", block=True),
-    ],
-    name="dispatch",
-)
+# Decorate the class cleanly
+@method_decorator(login_required, name="dispatch")
+@method_decorator(ratelimit(key="user", rate="5/m", method="POST", block=True), name="dispatch")
+@method_decorator(ensure_csrf_cookie, name="get")   # set csrftoken when serving the form
+@method_decorator(csrf_protect, name="post")        # enforce CSRF on POST
 class GenerateSOPView(View):
     """
-    Handles both:
-      - GET  → returns the modal form (generate_body.html)
-      - POST → processes form and returns result partial (generate_result.html)
+    GET  -> returns modal form (generate_body.html)
+    POST -> validates, generates, saves, and returns generate_result.html partial
     """
 
-    @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         ctx = {"form_data": {}, "niches": sorted(ALLOWED_NICHES)}
         return render(request, "frontend/modals/generate_body.html", ctx)
 
     def post(self, request):
+        # -------- Parse inputs --------
         prompt = (request.POST.get("prompt") or "").strip()
         niche = (request.POST.get("niche") or "general").lower()
         language = (request.POST.get("language") or "en").lower()
@@ -78,40 +103,52 @@ class GenerateSOPView(View):
         payment_value = (request.POST.get("payment_value") or "").strip()
         add_to_calendar = bool(request.POST.get("add_to_calendar"))
 
-        # --- Validation ---
+        # -------- Validation (return 200 so HTMX doesn't flag errors) --------
         if not prompt:
             return render(
                 request,
                 "frontend/partials/generate_result.html",
                 {"error": _("Prompt is required.")},
-                status=400,
+                status=200,
             )
         if niche not in ALLOWED_NICHES:
             return render(
                 request,
                 "frontend/partials/generate_result.html",
                 {"error": _("Invalid niche.")},
-                status=400,
+                status=200,
             )
         if payment_method in {"mbway", "iban", "stripe"} and not payment_value:
             return render(
                 request,
                 "frontend/partials/generate_result.html",
                 {"error": _("Please provide the payment value for the selected method.")},
-                status=400,
+                status=200,
             )
 
-        # --- Credit check ---
-        used = get_credits_used_this_month(request.user)
-        limit = get_monthly_limit_for_user(request.user)
-        if used + CREDITS_PER_SOP > limit:
-            return render(
-                request,
-                "frontend/partials/generate_result.html",
-                {"error": _("Credit limit reached for this month.")},
-                status=403,
-            )
+        # -------- Credit gate --------
+        used_before = get_credits_used_this_month(request.user)
 
+        if USE_NEW_CREDIT:
+            ok, msg = credit_gate(request.user, amount=CREDITS_PER_SOP, used_this_month=used_before)
+            if not ok:
+                return render(
+                    request,
+                    "frontend/partials/generate_result.html",
+                    {"error": _(msg)},
+                    status=200,
+                )
+        else:
+            limit = get_monthly_limit_for_user(request.user)
+            if used_before + CREDITS_PER_SOP > limit:
+                return render(
+                    request,
+                    "frontend/partials/generate_result.html",
+                    {"error": _("Credit limit reached for this month.")},
+                    status=200,
+                )
+
+        # -------- Generate + save --------
         constraints = {
             "niche": niche,
             "tone": tone,
@@ -120,7 +157,6 @@ class GenerateSOPView(View):
             "enable_calendar": add_to_calendar,
         }
 
-        # --- Call generator + save ---
         try:
             with transaction.atomic():
                 result_json = generate_micro_sop(
@@ -134,6 +170,7 @@ class GenerateSOPView(View):
                     include_signature=bool(request.POST.get("include_signature")),
                 )
 
+                # Save asset
                 GeneratedAsset.objects.create(
                     user=request.user,
                     asset_type="auto",
@@ -141,35 +178,45 @@ class GenerateSOPView(View):
                     prompt_used=prompt,
                 )
 
-                UsageRecord.objects.create(
-                    user=request.user, credits_used=CREDITS_PER_SOP
-                )
+                # Save usage (analytics)
+                UsageRecord.objects.create(user=request.user, credits_used=CREDITS_PER_SOP)
+
+                # Adjust buckets after success (trial or paid top-ups)
+                if USE_NEW_CREDIT:
+                    consume_post_success(
+                        request.user,
+                        amount=CREDITS_PER_SOP,
+                        used_before=used_before,
+                    )
 
         except ValueError as e:
             return render(
                 request,
                 "frontend/partials/generate_result.html",
-                {"error": f"Generation failed: {str(e)}"},
-                status=502,
+                {"error": _("Generation failed: %(msg)s") % {"msg": str(e)}},
+                status=200,
             )
         except TimeoutError:
             return render(
                 request,
                 "frontend/partials/generate_result.html",
                 {"error": _("Upstream model timeout. Please try again.")},
-                status=504,
+                status=200,
             )
         except Exception:
             return render(
                 request,
                 "frontend/partials/generate_result.html",
                 {"error": _("Unexpected error while generating.")},
-                status=500,
+                status=200,
             )
 
+        # -------- Build response --------
         plain_text = _result_to_plain_text(result_json)
         calendar_suggestion = (
-            result_json.get("calendar") if add_to_calendar and isinstance(result_json, dict) else None
+            result_json.get("calendar")
+            if add_to_calendar and isinstance(result_json, dict)
+            else None
         )
 
         return render(

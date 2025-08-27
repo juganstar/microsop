@@ -6,13 +6,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from accounts.views import CustomRegisterView
+from billing.views import stripe_webhook   # <-- add this import
 
 urlpatterns = [
     path("set-language/", set_language, name="set_language"),
+    # Webhooks should NOT be localized
+    path("webhooks/stripe/", stripe_webhook, name="stripe_webhook"),  # <-- change to direct view
 ]
 
 urlpatterns += i18n_patterns(
-    # FRONTEND
     path("", include("frontend.urls")),
     path("admin/", admin.site.urls),
 
@@ -27,6 +29,9 @@ urlpatterns += i18n_patterns(
 
     # ACCOUNTS
     path("", include("accounts.urls")),
+
+    # Billing app (localized)
+    path("billing/", include("billing.urls", namespace="billing")),
 )
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

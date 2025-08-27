@@ -11,15 +11,12 @@
     </div>
   {% endif %}
 
-  {# --- CSRF header helper (simple + reliable) --- #}
+  <!-- CSRF header helper used by htmx -->
   <script>
     window.csrfHeaders = function () {
-      // Prefer cookie (Django's expected token for AJAX)
       const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);
       if (m) return { "X-CSRFToken": decodeURIComponent(m[1]) };
-      // Fallback: hidden input from this form (works if cookie unreadable)
       const f = document.getElementById('generate-form');
-      const inp = f && f.querySelector('input[name="csrfmiddlewaretoken"]');
       return { "X-CSRFToken": inp ? inp.value : "" };
     };
   </script>
@@ -28,9 +25,7 @@
         hx-post="{% url 'api-generate-sop' %}"
         hx-target="#result-box"
         hx-swap="outerHTML"
-        hx-headers="js:window.csrfHeaders()"
         class="space-y-4">
-    {% csrf_token %}
 
     <!-- Niche -->
     <div>
@@ -71,7 +66,7 @@
       <label class="block text-sm mb-1 font-medium">{% trans "Payment method" %}</label>
       <select name="payment_method" id="payment-method"
               class="w-full bg-gray-800 border border-gray-700 focus:border-gray-500 focus:outline-none rounded-lg px-4 py-2"
-              onchange="togglePayValue(this.value)">
+              onchange="window.togglePayValue(this.value)">
         <option value="none">{% trans "No payment" %}</option>
         <option value="mbway">MB Way</option>
         <option value="iban">IBAN / NIB</option>
@@ -82,7 +77,8 @@
     <div id="pay-value-wrap" class="hidden">
       <label id="pay-value-label" class="block text-sm mb-1 font-medium"></label>
       <input name="payment_value" id="pay-value-input"
-             class="w-full bg-gray-800 border border-gray-700 focus:border-gray-500 focus:outline-none rounded-lg px-4 py-2" placeholder="">
+             class="w-full bg-gray-800 border border-gray-700 focus:border-gray-500 focus:outline-none rounded-lg px-4 py-2"
+             placeholder="">
       {% if errors.payment_value %}<div class="text-red-300 text-sm mt-1">{{ errors.payment_value }}</div>{% endif %}
     </div>
 
@@ -113,71 +109,73 @@
 </div>
 
 <script>
-  // --- Payment memory (per-method) ---
-  const PAY_KEYS = { mbway:'sop_pay_mbway', iban:'sop_pay_iban', stripe:'sop_pay_stripe' };
+  // Wrap everything to avoid redeclarations when modal is reopened
+  (function () {
+    const PAY_KEYS = { mbway:'sop_pay_mbway', iban:'sop_pay_iban', stripe:'sop_pay_stripe' };
 
-  function togglePayValue(method){
-    const wrap  = document.getElementById('pay-value-wrap');
-    const label = document.getElementById('pay-value-label');
-    const input = document.getElementById('pay-value-input');
-    if(!wrap || !label || !input) return;
+    window.togglePayValue = function (method) {
+      const wrap  = document.getElementById('pay-value-wrap');
+      const label = document.getElementById('pay-value-label');
+      const input = document.getElementById('pay-value-input');
+      if (!wrap || !label || !input) return;
 
-    if(method === 'mbway'){
-      wrap.classList.remove('hidden');
-      label.textContent = 'MB Way phone number';
-      input.placeholder = '9XXXXXXXX';
-      input.value = localStorage.getItem(PAY_KEYS.mbway) || input.value || '';
-    } else if(method === 'iban'){
-      wrap.classList.remove('hidden');
-      label.textContent = 'IBAN / NIB';
-      input.placeholder = 'PT50 …';
-      input.value = localStorage.getItem(PAY_KEYS.iban) || input.value || '';
-    } else if(method === 'stripe'){
-      wrap.classList.remove('hidden');
-      label.textContent = 'Stripe Payment Link';
-      input.placeholder = 'https://buy.stripe.com/...';
-      input.value = localStorage.getItem(PAY_KEYS.stripe) || input.value || '';
-    } else {
-      wrap.classList.add('hidden');
-      label.textContent = '';
-      input.value = '';
-    }
-  }
-
-  (function persistForm(){
-    const form     = document.getElementById('generate-form');
-    const methodEl = document.getElementById('payment-method');
-    const payInput = document.getElementById('pay-value-input');
-    const addCal   = document.getElementById('add-to-calendar');
-
-    try {
-      const saved = JSON.parse(localStorage.getItem('sopForm') || '{}');
-      for (const [k,v] of Object.entries(saved)) {
-        const el = form.querySelector(`[name="${k}"]`);
-        if (!el) continue;
-        if (el.type === 'checkbox') el.checked = !!v;
-        else el.value = v;
+      if (method === 'mbway') {
+        wrap.classList.remove('hidden');
+        label.textContent = 'MB Way phone number';
+        input.placeholder = '9XXXXXXXX';
+        input.value = localStorage.getItem(PAY_KEYS.mbway) || input.value || '';
+      } else if (method === 'iban') {
+        wrap.classList.remove('hidden');
+        label.textContent = 'IBAN / NIB';
+        input.placeholder = 'PT50 …';
+        input.value = localStorage.getItem(PAY_KEYS.iban) || input.value || '';
+      } else if (method === 'stripe') {
+        wrap.classList.remove('hidden');
+        label.textContent = 'Stripe Payment Link';
+        input.placeholder = 'https://buy.stripe.com/...';
+        input.value = localStorage.getItem(PAY_KEYS.stripe) || input.value || '';
+      } else {
+        wrap.classList.add('hidden');
+        label.textContent = '';
+        input.value = '';
       }
-    } catch {}
+    };
 
-    togglePayValue(methodEl.value || 'none');
+    (function persistForm(){
+      const form     = document.getElementById('generate-form');
+      const methodEl = document.getElementById('payment-method');
+      const payInput = document.getElementById('pay-value-input');
+      const addCal   = document.getElementById('add-to-calendar');
 
-    form.addEventListener('input', () => {
-      const method = methodEl.value;
-      if (['mbway','iban','stripe'].includes(method)) {
-        localStorage.setItem(PAY_KEYS[method], payInput.value || '');
-      }
-      const data = Object.fromEntries(new FormData(form).entries());
-      data.add_to_calendar = addCal.checked;
-      localStorage.setItem('sopForm', JSON.stringify(data));
-    });
+      try {
+        const saved = JSON.parse(localStorage.getItem('sopForm') || '{}');
+        for (const [k,v] of Object.entries(saved)) {
+          const el = form.querySelector(`[name="${k}"]`);
+          if (!el) continue;
+          if (el.type === 'checkbox') el.checked = !!v;
+          else el.value = v;
+        }
+      } catch {}
 
-    methodEl.addEventListener('change', () => {
-      const prev = Object.keys(PAY_KEYS).find(k => k !== methodEl.value);
-      if (prev && ['mbway','iban','stripe'].includes(prev) && payInput) {
-        localStorage.setItem(PAY_KEYS[prev], payInput.value || '');
-      }
-      togglePayValue(methodEl.value);
-    });
+      window.togglePayValue(methodEl.value || 'none');
+
+      form.addEventListener('input', () => {
+        const method = methodEl.value;
+        if (['mbway','iban','stripe'].includes(method)) {
+          localStorage.setItem(PAY_KEYS[method], payInput.value || '');
+        }
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.add_to_calendar = addCal.checked;
+        localStorage.setItem('sopForm', JSON.stringify(data));
+      });
+
+      methodEl.addEventListener('change', () => {
+        const prev = Object.keys(PAY_KEYS).find(k => k !== methodEl.value);
+        if (prev && ['mbway','iban','stripe'].includes(prev) && payInput) {
+          localStorage.setItem(PAY_KEYS[prev], payInput.value || '');
+        }
+        window.togglePayValue(methodEl.value);
+      });
+    })();
   })();
 </script>

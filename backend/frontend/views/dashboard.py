@@ -13,25 +13,6 @@ class GenerateFormView(View):
     def get(self, request):
         return render(request, "frontend/modals/generate_body.html", {"form_data": {}, "errors": {}})
 
-@method_decorator(login_required, name='dispatch')
-class GenerateSOPView(View):
-    def post(self, request):
-        prompt = request.POST.get("prompt")
-        asset_type = request.POST.get("asset_type")
-
-        if not prompt or not asset_type:
-            return JsonResponse({"error": "Faltam dados."}, status=400)
-
-        result = generate_micro_sop(asset_type, prompt)
-
-        GeneratedAsset.objects.create(
-            user=request.user,
-            asset_type=asset_type,
-            prompt_used=prompt,
-            content=result
-        )
-
-        return render(request, "frontend/partials/generate_result.html", {"result": result})
 
 @method_decorator(login_required, name='dispatch')
 class UsageTrackerView(View):

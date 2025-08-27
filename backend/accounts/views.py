@@ -15,10 +15,6 @@ from allauth.account.models import EmailAddress
 from accounts.serializers import CustomRegisterSerializer
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-@ensure_csrf_cookie
-def home(request):
-    return render(request, "frontend/home.html")
-
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
