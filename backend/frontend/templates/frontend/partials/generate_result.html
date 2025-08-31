@@ -4,6 +4,52 @@
     <div class="rounded-lg bg-red-600/10 border border-red-500 px-3 py-2 text-sm text-red-200">
       {{ error }}
     </div>
+
+    {# Optional technical details (only shown if the view sets error_detail in DEBUG) #}
+    {% if error_detail %}
+      <details class="rounded-lg bg-black/30 border border-red-500/40 px-3 py-2 text-xs text-red-200/90">
+        <summary class="cursor-pointer select-none">{% trans "Technical details (dev)" %}</summary>
+        <pre class="mt-2 whitespace-pre-wrap">{{ error_detail }}</pre>
+      </details>
+    {% endif %}
+
+    <div class="flex items-center gap-3">
+      {# Retry: re-submits the original generator form via HTMX without touching the modal body #}
+      <button
+        type="button"
+        class="bg-white/10 hover:bg-white/20 text-sm px-3 py-1 rounded"
+        onclick="retryGenerate(this)"
+      >
+        {% trans "Try again" %}
+      </button>
+      <span class="text-xs text-gray-400">{% trans "If this keeps happening, please report it." %}</span>
+    </div>
+
+    <script>
+      // Minimal, safe retry helper. No route names, no template vars inside JS.
+      function retryGenerate(btn){
+        var form = document.querySelector('form#generate-form') ||
+                   document.querySelector('form[hx-target="#result-box"]');
+        if(!form){ console.warn('Generator form not found'); return; }
+
+        var url = form.getAttribute('hx-post') || form.getAttribute('action') || window.location.href;
+
+        var old = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '{{ _("Working…") }}';
+
+        htmx.ajax('POST', url, {
+          target: '#result-box',
+          swap: 'outerHTML',
+          source: form,
+          headers: {'X-CSRFToken': (typeof getCookie==='function' ? getCookie('csrftoken') : '')}
+        }).finally(function(){
+          btn.disabled = false;
+          btn.textContent = old;
+        });
+      }
+    </script>
+
   {% else %}
     <div class="flex items-center justify-between">
       <h3 class="text-lg font-semibold">{% trans "Result" %}</h3>

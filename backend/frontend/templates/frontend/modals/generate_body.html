@@ -16,7 +16,7 @@
     window.csrfHeaders = function () {
       const m = document.cookie.match(/(?:^| )csrftoken=([^;]+)/);
       if (m) return { "X-CSRFToken": decodeURIComponent(m[1]) };
-      const f = document.getElementById('generate-form');
+      const inp = document.querySelector('input[name="csrfmiddlewaretoken"]');
       return { "X-CSRFToken": inp ? inp.value : "" };
     };
   </script>
@@ -40,6 +40,27 @@
         <option value="design">{% trans "Design" %}</option>
       </select>
     </div>
+
+    <!-- Output language (defaults to site language; user can switch) -->
+    <div>
+      <label class="block text-sm mb-1 font-medium">{% trans "Output language" %}</label>
+
+      {# get current UI language from Django i18n #}
+      {% get_current_language as CUR_LANG %}
+
+      {% with cur=form_data.language|default:CUR_LANG|slice:":2" %}
+        <select name="language" id="id_language"
+                class="w-full bg-gray-800 border border-gray-700 focus:border-gray-500 focus:outline-none rounded-lg px-4 py-2">
+          <option value="en" {% if cur == 'en' %}selected{% endif %}>English</option>
+          <option value="pt" {% if cur == 'pt' %}selected{% endif %}>Português (PT)</option>
+        </select>
+      {% endwith %}
+
+      <p class="text-xs text-gray-400 mt-1">
+        {% trans "Default follows the site language." %} ({% get_current_language as CUR_LANG_DISP %}{{ CUR_LANG_DISP|upper }})
+      </p>
+    </div>
+
 
     <!-- Tone -->
     <div>
